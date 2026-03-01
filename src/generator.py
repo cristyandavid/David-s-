@@ -6,6 +6,22 @@ Entry point: generate(contract_type, params) -> str
 
 SUPPORTED_TYPES = ["erc20", "erc721", "multisig"]
 
+# Fields required per contract type. None values are also rejected.
+REQUIRED_PARAMS: dict[str, list[str]] = {
+    "erc20": ["name"],
+    "erc721": ["name"],
+    "multisig": ["name"],
+}
+
+
+def _validate_params(contract_type: str, params: dict) -> None:
+    """Raise ValueError if any required param is missing or None."""
+    for field in REQUIRED_PARAMS.get(contract_type, []):
+        if params.get(field) is None:
+            raise ValueError(
+                f"Missing required param '{field}' for contract type '{contract_type}'."
+            )
+
 
 def generate(contract_type: str, params: dict) -> str:
     """
@@ -19,7 +35,7 @@ def generate(contract_type: str, params: dict) -> str:
         A string containing the generated contract source.
 
     Raises:
-        ValueError: If contract_type is not supported.
+        ValueError: If contract_type is not supported or required params are missing.
     """
     contract_type = contract_type.lower().strip()
     if contract_type not in SUPPORTED_TYPES:
@@ -27,6 +43,8 @@ def generate(contract_type: str, params: dict) -> str:
             f"Unsupported contract type '{contract_type}'. "
             f"Choose from: {', '.join(SUPPORTED_TYPES)}"
         )
+
+    _validate_params(contract_type, params)
 
     name = params.get("name", "MyContract")
 

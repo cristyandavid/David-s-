@@ -27,3 +27,13 @@ def test_generate_all_supported_types():
 def test_generate_raises_on_unknown_type():
     with pytest.raises(ValueError, match="Unsupported contract type"):
         generate("unknown_type", {})
+
+
+def test_generate_raises_on_none_required_param():
+    with pytest.raises(ValueError, match="Missing required param 'name'"):
+        generate("erc20", {"name": None})
+
+
+def test_generate_raises_on_missing_required_param():
+    with pytest.raises(ValueError, match="Missing required param 'name'"):
+        generate("erc721", {})
