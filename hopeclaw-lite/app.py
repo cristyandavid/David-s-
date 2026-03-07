@@ -4,7 +4,10 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from config import TELEGRAM_BOT_TOKEN, BOT_NAME
+from config import (
+    TELEGRAM_BOT_TOKEN, BOT_NAME,
+    WEBHOOK_URL, WEBHOOK_PORT, WEBHOOK_PATH, WEBHOOK_CERT, WEBHOOK_KEY,
+)
 from memory import init_db
 from agent import call_llm, parse_tool
 from tools import run_tool
@@ -63,7 +66,23 @@ def main():
     )
     scheduler.start()
 
-    app.run_polling(drop_pending_updates=True)
+    if WEBHOOK_URL:
+        import os
+        from telegram.ext import Updater
+        cert = open(WEBHOOK_CERT, 'rb') if os.path.exists(WEBHOOK_CERT) else None
+        app.run_webhook(
+            listen='0.0.0.0',
+            port=WEBHOOK_PORT,
+            url_path=WEBHOOK_PATH,
+            webhook_url=f'{WEBHOOK_URL.rstrip("/")}{WEBHOOK_PATH}',
+            cert=cert,
+            key=WEBHOOK_KEY if os.path.exists(WEBHOOK_KEY) else None,
+            drop_pending_updates=True,
+        )
+        if cert:
+            cert.close()
+    else:
+        app.run_polling(drop_pending_updates=True)
 
 if __name__ == '__main__':
     main()
