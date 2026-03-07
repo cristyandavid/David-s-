@@ -59,8 +59,8 @@ check_os
 echo -e "\n${BOLD}--- Configuration ---${RESET}"
 prompt TELEGRAM_TOKEN  "Telegram Bot Token (from @BotFather)"
 prompt DM_POLICY       "dmPolicy — who can DM the bot (pairing/open)" "pairing"
-prompt LLM_PROVIDER    "LLM provider (anthropic/openai/google)"       "anthropic"
-prompt LLM_API_KEY     "LLM API Key"
+prompt LLM_PROVIDER    "LLM provider (kimi/anthropic/openai/google)"  "kimi"
+prompt LLM_API_KEY     "LLM API Key (get a fresh one from platform.moonshot.cn)"
 prompt OPENCLAW_DIR    "OpenClaw data directory"                      "/opt/openclaw"
 
 echo ""
