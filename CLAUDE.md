@@ -4,6 +4,20 @@
 
 ---
 
+## Setup
+
+Copy `.env.example` to `.env` and fill in your Anthropic API key:
+
+```bash
+cp .env.example .env
+# then edit .env and set ANTHROPIC_API_KEY=sk-ant-...
+```
+
+Claude Code will pick up `ANTHROPIC_API_KEY` automatically from the environment.
+Never commit `.env` — it is listed in `.gitignore`.
+
+---
+
 ## The 15-Minute Daily Loop
 
 | Window | Command | Purpose |

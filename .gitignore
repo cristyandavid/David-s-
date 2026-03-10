@@ -1,0 +1,4 @@
+# Environment files — never commit real API keys
+.env
+.env.local
+.env.*.local
