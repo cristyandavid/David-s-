@@ -1,0 +1,12 @@
+# Byte-compiled Python
+__pycache__/
+*.py[cod]
+
+# Snapshots are committed by the workflow — ignore local "latest" convenience copy
+# (Comment out the line below if you want to track latest.csv in git too)
+data/snapshots/latest.csv
+
+# OS / editor noise
+.DS_Store
+*.swp
+.venv/
