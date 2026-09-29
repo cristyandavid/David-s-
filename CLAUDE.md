@@ -50,6 +50,30 @@ contained change. Commit when done.
 
 ---
 
+## Kimi AI Integration
+
+Kimi (Moonshot AI) is configured as an MCP server, providing access to its models
+alongside Claude within this console.
+
+**Setup:** Set `KIMI_API_KEY` in your environment before starting Claude Code.
+
+```bash
+export KIMI_API_KEY=your_moonshot_api_key
+```
+
+**Available models** (set via `OPENAI_MODEL` in `.claude/settings.json`):
+| Model | Context |
+|-------|---------|
+| `moonshot-v1-8k` | 8k tokens (default) |
+| `moonshot-v1-32k` | 32k tokens |
+| `moonshot-v1-128k` | 128k tokens |
+
+**API base:** `https://api.moonshot.cn/v1`
+
+Get an API key at [platform.moonshot.cn](https://platform.moonshot.cn).
+
+---
+
 ## Behavior Defaults
 
 - Read before editing. Understand before suggesting.
