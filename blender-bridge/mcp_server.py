@@ -70,6 +70,9 @@ def execute_blender_code(code: str) -> dict:
 
     Printed output is returned as stdout. Assign a JSON-serializable value to a
     variable named `result` to return it directly.
+
+    Never call bpy.ops.wm.read_factory_settings or read_homefile: they reset
+    preferences, which disables this bridge. Clear a scene by removing objects.
     """
     return send({"type": "exec", "code": code})
 

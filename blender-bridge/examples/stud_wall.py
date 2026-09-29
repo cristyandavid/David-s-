@@ -34,8 +34,16 @@ def box(name, size, loc, mat):
     return obj
 
 
-bpy.ops.wm.read_factory_settings(use_empty=True)
+# Clear the scene by hand. Don't use read_factory_settings/read_homefile:
+# they reset preferences, which disables the Claude Bridge add-on mid-request.
 scene = bpy.context.scene
+for obj in list(scene.objects):
+    bpy.data.objects.remove(obj, do_unlink=True)
+for datablocks in (bpy.data.meshes, bpy.data.materials, bpy.data.cameras,
+                   bpy.data.lights, bpy.data.worlds):
+    for block in list(datablocks):
+        if block.users == 0:
+            datablocks.remove(block)
 wood = material("SPF Lumber", (0.80, 0.58, 0.33))
 floor = material("Floor", (0.25, 0.25, 0.27))
 L, H = WALL_FT * 12 * IN, HEIGHT_FT * 12 * IN
