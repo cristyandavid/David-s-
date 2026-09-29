@@ -1,0 +1,7 @@
+{
+    "name": "SiteXR.Editor",
+    "references": [],
+    "includePlatforms": ["Editor"],
+    "excludePlatforms": [],
+    "autoReferenced": false
+}

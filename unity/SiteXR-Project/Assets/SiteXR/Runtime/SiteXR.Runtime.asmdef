@@ -1,0 +1,11 @@
+{
+    "name": "SiteXR.Runtime",
+    "references": ["Unity.XR.ARFoundation", "Unity.XR.ARSubsystems"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "autoReferenced": true,
+    "defineConstraints": ["SITEXR_ARF"],
+    "versionDefines": [
+        { "name": "com.unity.xr.arfoundation", "expression": "5.0.0", "define": "SITEXR_ARF" }
+    ]
+}
