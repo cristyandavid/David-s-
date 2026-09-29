@@ -13,6 +13,19 @@ Claude Code ──MCP (stdio)──► mcp_server.py ──TCP 127.0.0.1:9876─
 
 ## Setup (once)
 
+**Quick way.** Quit Blender, then in Terminal:
+
+```bash
+git clone https://github.com/cristyandavid/David-s-.git && cd David-s-/blender-bridge
+./setup.sh
+```
+
+This creates a Python venv with `mcp`, installs and enables the add-on, and
+registers the `blender` MCP server with Claude Code. It's safe to re-run. If
+Blender isn't in `/Applications`, run it as `BLENDER=/path/to/Blender ./setup.sh`.
+
+**Manual way:**
+
 1. **Install the add-on** — Blender → Edit → Preferences → Add-ons → Install… →
    pick `addon/claude_bridge.py` → tick **Claude Bridge**. (Blender 4.2+: use
    the dropdown → *Install from Disk*.)
@@ -27,7 +40,13 @@ Claude Code ──MCP (stdio)──► mcp_server.py ──TCP 127.0.0.1:9876─
 1. In Blender's 3D viewport press **N** → **Claude** tab → **Start Claude Bridge**.
 2. Start Claude on the same machine: `claude` in a terminal, or
    `claude remote-control` to drive it from the Claude app on your phone/web.
-3. Ask: *"Ping Blender"*, then e.g. *"Build a 12×16 ft stud wall at 16 in. on center."*
+3. Ask: *"Ping Blender"*, then try the example: *"Run examples/stud_wall.py in Blender."*
+
+![Stud wall built and rendered through the bridge](examples/stud_wall.png)
+
+`examples/stud_wall.py` builds a 16 ft 2×4 wall at 16 in. on center (13 studs,
+a bottom plate and a double top plate) and renders it. Edit the numbers at the
+top of the file, or just ask Claude for a different size.
 
 ## Tools Claude gets
 
