@@ -50,22 +50,25 @@ top of the file, or just ask Claude for a different size.
 
 ## AR / XR
 
-`examples/export_ar.py` exports the current model at real-world scale, centred
-and sitting on the floor:
+Three scripts take a model from Blender to the job site:
+
+| Step | Script | What it does |
+|------|--------|--------------|
+| 1 | `examples/stud_wall.py` (or your own model) | Build it |
+| 2 | `examples/site_anchors.py` | Adds control points **CP_A** and **CP_B** on the layout line (for a wall, the chalk line along the bottom plate), at any wall angle. Move them in Blender to any two points you can find on site |
+| 3 | `examples/export_ar.py` | Exports at real-world scale, with CP_A as the origin and CP_A→CP_B along +X |
+
+Ask Claude *"run site_anchors.py then export_ar.py in Blender"*. Files go to your Desktop:
 
 | File | Opens on |
 |------|----------|
-| `.usdz` | iPhone, iPad, Vision Pro: tap it in Files or Messages to place it in AR |
+| `.usdz` | iPhone, iPad, Vision Pro: tap it in Files or Messages. The tap point is CP_A |
 | `.glb` | Android, Meta Quest, web viewers; Unity via the glTFast package |
-| `.fbx` | Unity: drag it into `Assets/` |
+| `.fbx` | Unity. **For on-site alignment to your real marks, see [`../unity/README.md`](../unity/README.md)** |
 
-Ready-made files for the stud wall are in [`examples/ar/`](examples/ar/). On an
-iPhone or iPad, open `stud_wall.usdz` on GitHub, tap **Download**, and open it
-from Files to see the 16 ft wall full size in your space.
-
-To export your own model, build it and then ask Claude to *"run
-examples/export_ar.py in Blender"*. The files go to your Desktop. The script
-skips objects named `Floor`; add other names to `SKIP` at the top of the file.
+Ready-made stud wall files, with control points, are in [`examples/ar/`](examples/ar/).
+On an iPhone or iPad, open `stud_wall.usdz` on GitHub, tap **Download**, and open
+it from Files to see the 16 ft wall full size.
 
 ## Tools Claude gets
 
