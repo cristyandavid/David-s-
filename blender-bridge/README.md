@@ -48,6 +48,25 @@ Blender isn't in `/Applications`, run it as `BLENDER=/path/to/Blender ./setup.sh
 a bottom plate and a double top plate) and renders it. Edit the numbers at the
 top of the file, or just ask Claude for a different size.
 
+## AR / XR
+
+`examples/export_ar.py` exports the current model at real-world scale, centred
+and sitting on the floor:
+
+| File | Opens on |
+|------|----------|
+| `.usdz` | iPhone, iPad, Vision Pro: tap it in Files or Messages to place it in AR |
+| `.glb` | Android, Meta Quest, web viewers; Unity via the glTFast package |
+| `.fbx` | Unity: drag it into `Assets/` |
+
+Ready-made files for the stud wall are in [`examples/ar/`](examples/ar/). On an
+iPhone or iPad, open `stud_wall.usdz` on GitHub, tap **Download**, and open it
+from Files to see the 16 ft wall full size in your space.
+
+To export your own model, build it and then ask Claude to *"run
+examples/export_ar.py in Blender"*. The files go to your Desktop. The script
+skips objects named `Floor`; add other names to `SKIP` at the top of the file.
+
 ## Tools Claude gets
 
 | Tool | What it does |

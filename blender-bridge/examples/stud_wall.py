@@ -61,6 +61,7 @@ for i, x in enumerate(xs, 1):
     box(f"Stud {i:02d}", (T, D, stud_h), (x, 0, T + stud_h / 2), wood)
 
 bpy.ops.mesh.primitive_plane_add(size=40, location=(L / 2, 0, 0))
+bpy.context.object.name = "Floor"
 bpy.context.object.data.materials.append(floor)
 
 bpy.ops.object.light_add(type="SUN", rotation=(0.9, 0.3, 0.7))
