@@ -1,0 +1,22 @@
+{
+  "name": "com.cristyandavid.sitexr",
+  "version": "0.1.0",
+  "displayName": "SiteXR",
+  "description": "Two-point on-site AR alignment for construction blueprints. Snap a Blender-exported model onto two real-world layout marks and check the measured span against the plan. iOS + Android via AR Foundation.",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.xr.arfoundation": "5.1.0"
+  },
+  "keywords": [
+    "ar",
+    "xr",
+    "arfoundation",
+    "construction",
+    "layout",
+    "surveying"
+  ],
+  "author": {
+    "name": "Cristyan David"
+  },
+  "license": "MIT"
+}
