@@ -94,7 +94,7 @@ public class SiteAligner : MonoBehaviour
             Fail("Model's CP_A and CP_B are on the same point. Re-run site_anchors.py in Blender and re-export.");
             return;
         }
-        if (siteDir.magnitude < 0.3f)
+        if (siteDir.magnitude < 0.3048f)  // 1 ft exactly
         {
             Fail("A and B are too close together. Mark two points at least 1 ft apart.");
             step = Step.MarkB;
