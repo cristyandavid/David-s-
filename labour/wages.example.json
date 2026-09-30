@@ -1,0 +1,15 @@
+{
+  "_about": "WAGE TEMPLATE. These numbers are placeholders (0.00) on purpose. Copy this file to wages.json and fill it with REAL Ontario pay rates for YOUR crew (or the applicable union/collective-agreement rates for the site). Never trust the zeros. Role keys match the role_split roles used in crew_rates.json.",
+  "currency": "CAD",
+  "rate_basis": "base hourly wage, per person-hour (a labour-hour). NOT the fully-burdened cost.",
+  "as_of": "TODO: effective date of these rates",
+  "source": "TODO: your payroll / the site's collective agreement / union rate sheet",
+  "_burden_note": "These are BASE wages only. Your true cost per hour is higher. On top of base wage, add labour burden: WSIB premium (rate depends on your classification unit - verify current rate with WSIB), CPP and EI employer portions, Employer Health Tax if applicable, vacation pay (ESA minimum is 4%, rising to 6% after 5 years - verify current ESA), statutory holiday pay, and any benefits/pension/union dues. A common all-in burden is roughly 20-40% over base, but CONFIRM your own numbers. crew_rates.json / labour_takeoff.py cost the base wage only; add your burden % separately.",
+  "_esa_note": "Verify overtime, breaks, and hours-of-work handling against the current Ontario Employment Standards Act (ESA). Overtime (commonly after 44 hrs/week in Ontario, but VERIFY) is not modelled here.",
+  "hourly_wages": {
+    "foreman": { "unit": "per_hour", "wage": 0.00, "note": "TODO: working foreman / supervisor" },
+    "carpenter": { "unit": "per_hour", "wage": 0.00, "note": "TODO: journeyperson / lead carpenter" },
+    "apprentice": { "unit": "per_hour", "wage": 0.00, "note": "TODO: apprentice carpenter (rate often set by apprenticeship level)" },
+    "labourer": { "unit": "per_hour", "wage": 0.00, "note": "TODO: general construction labourer" }
+  }
+}
