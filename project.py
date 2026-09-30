@@ -32,6 +32,7 @@ without costs. Nothing here invents prices, wages, or legal figures.
 import argparse
 import datetime
 import json
+import math
 import os
 import sys
 
@@ -131,6 +132,7 @@ def build_package(intake):
         pkg["warnings"].append(f"procurement: {exc}")
 
     # --- Labour ------------------------------------------------------------
+    labour_days = {}   # schedule task id -> working days, derived from this scope
     try:
         rows, total_lh, total_cost, role_lh = [], 0.0, 0.0, {}
         for it in assemblies:
@@ -144,6 +146,17 @@ def build_package(intake):
                          "labour_hours": round(r["total_lh"], 2),
                          "crew_size": r["crew_size"],
                          "cost": (round(r["total_cost"], 2) if r["total_cost"] else None)})
+        # Connect labour -> scheduling: turn this project's actual framing hours
+        # into working-day durations for the matching schedule tasks, so the
+        # timeline reflects the real scope instead of the reference house.
+        crew_ref = max((x["crew_size"] for x in rows), default=4)
+        HOURS_PER_DAY = 8.0
+        wall_lh = sum(x["labour_hours"] for x in rows if "wall" in x["assembly"])
+        floor_lh = sum(x["labour_hours"] for x in rows if "floor" in x["assembly"])
+        if wall_lh > 0:
+            labour_days["framing_walls"] = max(1, math.ceil(wall_lh / (crew_ref * HOURS_PER_DAY)))
+        if floor_lh > 0:
+            labour_days["framing_floor"] = max(1, math.ceil(floor_lh / (crew_ref * HOURS_PER_DAY)))
         dept["labour"] = {
             "site_factor": factor,
             "assemblies": rows,
@@ -156,9 +169,14 @@ def build_package(intake):
         dept["labour"] = {"error": f"{type(exc).__name__}: {exc}"}
         pkg["warnings"].append(f"labour: {exc}")
 
-    # --- Scheduling (whole-house network) ----------------------------------
+    # --- Scheduling (whole-house network, scope-informed) ------------------
     try:
         tasks = sch._load(os.path.join(ROOT, "scheduling", "phases.json"))["tasks"]
+        # Override reference durations with this project's labour-derived days.
+        for t in tasks:
+            if t["id"] in labour_days:
+                t["duration_model"] = {"type": "fixed", "days": labour_days[t["id"]],
+                                       "source": "labour"}
         order, info, finish = sch.cpm(tasks)
         start = intake.get("start_date")
         sched_rows = []
@@ -169,6 +187,7 @@ def build_package(intake):
                    "slack": i["slack"], "critical": i["critical"]}
             sched_rows.append(row)
         out = {"tasks": sched_rows, "project_working_days": finish,
+               "scope_derived_tasks": sorted(labour_days),
                "critical_path": [info[t]["label"] for t in order if info[t]["critical"]]}
         if start:
             try:
@@ -194,6 +213,26 @@ def build_package(intake):
     except Exception as exc:
         dept["safety"] = {"error": f"{type(exc).__name__}: {exc}"}
         pkg["warnings"].append(f"safety: {exc}")
+
+    # --- Project totals (ties the departments into one bottom line) ---------
+    po_ = dept.get("procurement", {})
+    lab_ = dept.get("labour", {})
+    sc_ = dept.get("scheduling", {})
+    mat_total = po_.get("grand_total") if isinstance(po_, dict) else None
+    lab_total = lab_.get("total_labour_cost") if isinstance(lab_, dict) else None
+    totals = {
+        "materials_incl_hst": mat_total,
+        "labour_base_cost": lab_total,
+        "total_labour_hours": lab_.get("total_labour_hours") if isinstance(lab_, dict) else None,
+        "schedule_working_days": sc_.get("project_working_days") if isinstance(sc_, dict) else None,
+        "schedule_finish_date": sc_.get("finish_date") if isinstance(sc_, dict) else None,
+    }
+    if mat_total is not None and lab_total is not None:
+        totals["project_cost_estimate"] = round(mat_total + lab_total, 2)
+        totals["note"] = ("Materials include 13% HST; labour is base wages only "
+                          "(WSIB/burden/ESA extra, and HST on labour depends on your "
+                          "setup). Estimate for planning, not a quote.")
+    pkg["totals"] = totals
 
     return pkg
 
@@ -237,12 +276,27 @@ def summarize(pkg):
         L.append(f"  {sc['project_working_days']} working days"
                  + (f"   {sc.get('start_date')} -> {sc.get('finish_date')}" if sc.get("finish_date") else ""))
         L.append(f"  critical path: {len(sc['critical_path'])} tasks")
+        if sc.get("scope_derived_tasks"):
+            L.append(f"  durations from this project's labour: {', '.join(sc['scope_derived_tasks'])}")
 
     sf = d.get("safety", {})
     if "briefings" in sf:
         L.append("\nSAFETY")
         L.append(f"  briefings included: {', '.join(sf['briefings'].keys())}")
         L.append("  " + sf["disclaimer"])
+
+    t = pkg.get("totals", {})
+    if t.get("project_cost_estimate") is not None or t.get("total_labour_hours") is not None:
+        L.append("\nPROJECT TOTALS")
+        if t.get("materials_incl_hst") is not None:
+            L.append(f"  materials (incl HST)   ${t['materials_incl_hst']:>12.2f}")
+        if t.get("labour_base_cost") is not None:
+            L.append(f"  labour (base)          ${t['labour_base_cost']:>12.2f}")
+        if t.get("project_cost_estimate") is not None:
+            L.append(f"  PROJECT COST ESTIMATE  ${t['project_cost_estimate']:>12.2f}")
+        if t.get("total_labour_hours") is not None:
+            L.append(f"  {t['total_labour_hours']} labour-hours over {t.get('schedule_working_days')} working days"
+                     + (f", finishing {t['schedule_finish_date']}" if t.get("schedule_finish_date") else ""))
 
     if pkg["warnings"]:
         L.append("\nWARNINGS")

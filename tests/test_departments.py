@@ -152,6 +152,46 @@ class TestOrchestrator(unittest.TestCase):
         pkg = orch.build_package(intake)  # must not raise
         self.assertTrue(pkg["warnings"])
 
+    def test_schedule_is_scope_driven(self):
+        # framing_walls duration must grow with the actual wall length (labour -> schedule)
+        def framing_days(ft):
+            pkg = orch.build_package(
+                {"project": "x", "assemblies": [{"assembly": "exterior_wall_2x6_16oc", "length_ft": ft}]})
+            sc = pkg["departments"]["scheduling"]
+            self.assertIn("framing_walls", sc["scope_derived_tasks"])
+            return [r["duration"] for r in sc["tasks"] if r["id"] == "framing_walls"][0]
+        self.assertLess(framing_days(40), framing_days(2000))
+
+    def test_totals_combine_materials_and_labour(self):
+        import json
+        import tempfile
+        prices = {"unit_prices": {}}
+        with open(os.path.join(ROOT, "materials", "prices.example.json")) as fh:
+            mat_prices = json.load(fh)
+        for k, v in mat_prices["unit_prices"].items():
+            prices["unit_prices"][k] = {"price": 1.0}
+        with open(os.path.join(ROOT, "labour", "wages.example.json")) as fh:
+            wages = json.load(fh)
+        hw = wages.get("hourly_wages") or {}
+        for r in hw.values():
+            if isinstance(r, dict):
+                r["wage"] = 50.0
+        with tempfile.TemporaryDirectory() as d:
+            pf = os.path.join(d, "prices.json")
+            wf = os.path.join(d, "wages.json")
+            with open(pf, "w") as fh:
+                json.dump(prices, fh)
+            with open(wf, "w") as fh:
+                json.dump(wages, fh)
+            pkg = orch.build_package({
+                "project": "x", "prices_file": pf, "wages_file": wf,
+                "assemblies": [{"assembly": "exterior_wall_2x6_16oc", "length_ft": 40}]})
+        t = pkg["totals"]
+        self.assertIsNotNone(t["materials_incl_hst"])
+        self.assertIsNotNone(t["labour_base_cost"])
+        self.assertAlmostEqual(
+            t["project_cost_estimate"], t["materials_incl_hst"] + t["labour_base_cost"], places=2)
+
 
 if __name__ == "__main__":
     unittest.main()
