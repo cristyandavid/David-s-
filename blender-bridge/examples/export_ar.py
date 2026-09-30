@@ -38,6 +38,11 @@ hi = [max(v[i] for v in corners) for i in range(3)]
 
 if site_aligned:
     a, b = (cp.matrix_world.translation.copy() for cp in cps)
+    if math.hypot(b.x - a.x, b.y - a.y) < 1e-6:
+        # atan2(0, 0) returns 0 rather than raising, so without this the export
+        # would silently ship coincident control points with an arbitrary yaw,
+        # leaving the Unity site aligner no CP_A->CP_B direction to snap to.
+        raise RuntimeError("CP_A and CP_B coincide horizontally; re-run site_anchors.py")
     yaw = math.atan2(b.y - a.y, b.x - a.x)
     to_export = Matrix.Rotation(-yaw, 4, "Z") @ Matrix.Translation(-a)
     exported = meshes + cps

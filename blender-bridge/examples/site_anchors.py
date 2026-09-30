@@ -94,7 +94,7 @@ a = bpy.data.objects["CP_A"].matrix_world.translation
 b = bpy.data.objects["CP_B"].matrix_world.translation
 dist = (b - a).length
 inches = dist / 0.0254
-if (Vector((b.x - a.x, b.y - a.y, 0))).length < 0.3:
+if (Vector((b.x - a.x, b.y - a.y, 0))).length < 0.3048:  # 1 ft exactly
     raise RuntimeError("CP_A and CP_B must be at least 1 ft apart horizontally")
 
 result = {

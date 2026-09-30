@@ -1,0 +1,102 @@
+{
+  "_about": "Labour-hour productivity factors for the framing assemblies in materials/assemblies.json. Keys match that file exactly (interior_wall_2x4_16oc, exterior_wall_2x6_16oc, floor_system_ijoist_16oc). Each assembly is broken into the tasks needed to build it; each task carries a labour-hour factor per unit of work plus a role split for costing. These are typical published estimating productivity rates (the kind found in RSMeans / Craftsman National Construction Estimator), given as mid-range values with the documented ranges. Calibrate to your own crew's real production before you bid.",
+  "_units": "Factors are LABOUR-HOURS (person-hours), NOT crew-hours. A crew of N working 1 hour = N labour-hours. Elapsed crew time = total labour-hours / crew size. Wages are paid per person-hour, so labour-hours are what multiplies by a wage. labour_takeoff.py reports both total labour-hours and elapsed crew time.",
+  "_scope": "Covers carpentry to build the assembly: framing, sheathing, weather-resistive barrier, batt insulation, vapour barrier, and drywall HANGING. Explicitly EXCLUDED: drywall taping/mudding/sanding, priming/painting, electrical/plumbing/HVAC rough-in, doors/windows/trim, exterior cladding, and site cleanup/mobilization. Those are separate line items or trades.",
+  "_conditions": "Rates assume normal ground-floor work, standard 8 ft walls, reasonable access, and an experienced crew. Multiply by a conditions factor for hard cases (high walls, cold weather, tight access, heavy openings): typical adjustments 1.10-1.40. Pass --factor on the CLI to apply one; default is 1.0.",
+  "_ontario_note": "Productivity is a physics/labour fact and does not change by jurisdiction. But how those hours are PAID and scheduled in Ontario does: verify overtime, breaks, stat holidays and hours-of-work against the current Ontario Employment Standards Act (ESA), and add WSIB premiums plus labour burden (see wages.example.json). This file does not model those; it only estimates hours.",
+  "linear_assemblies": {
+    "_unit": "labour-hours per linear foot of wall, at the assembly's nominal height (8 ft)",
+    "interior_wall_2x4_16oc": {
+      "label": "Interior partition, 2x4 SPF, 16\" O.C., 8 ft - labour",
+      "crew": [
+        { "role": "carpenter", "count": 1, "note": "lead carpenter: layout, cutting, plumb/line" },
+        { "role": "labourer", "count": 1, "note": "stocks material, nails off, holds/fastens" }
+      ],
+      "tasks": {
+        "layout & wall framing (plates, studs, blocking)": {
+          "lh_per_ft": 0.10,
+          "range_lh_per_ft": [0.08, 0.14],
+          "role_split": { "carpenter": 0.5, "apprentice": 0.25, "labourer": 0.25 },
+          "note": "Snap lines, cut and set plates, install studs at 16\" O.C., blocking; build in place. ~0.10 lh per lin ft of 8 ft wall."
+        },
+        "hang drywall 1/2\" (both faces)": {
+          "lh_per_ft": 0.176,
+          "range_lh_per_ft": [0.14, 0.21],
+          "role_split": { "carpenter": 0.5, "labourer": 0.5 },
+          "note": "Hang only, no tape/mud. ~0.011 lh/sqft x 16 sqft/ft (two faces x 8 ft). Taping/finishing is a separate trade and is NOT included."
+        }
+      }
+    },
+    "exterior_wall_2x6_16oc": {
+      "label": "Exterior load-bearing wall, 2x6 SPF, 16\" O.C., 8 ft - labour",
+      "crew": [
+        { "role": "carpenter", "count": 1, "note": "lead carpenter" },
+        { "role": "carpenter", "count": 1, "note": "second carpenter (load-bearing, sheathing, lift)" },
+        { "role": "labourer", "count": 1, "note": "stocks, fastens, air/vapour details" }
+      ],
+      "tasks": {
+        "layout & wall framing (plates, studs, blocking)": {
+          "lh_per_ft": 0.14,
+          "range_lh_per_ft": [0.12, 0.18],
+          "role_split": { "carpenter": 0.5, "apprentice": 0.25, "labourer": 0.25 },
+          "note": "Heavier 2x6 load-bearing wall; more careful layout, openings and lifting than a partition. ~0.14 lh per lin ft."
+        },
+        "install OSB sheathing 7/16\"": {
+          "lh_per_ft": 0.096,
+          "range_lh_per_ft": [0.08, 0.12],
+          "role_split": { "carpenter": 0.4, "apprentice": 0.3, "labourer": 0.3 },
+          "note": "~0.012 lh/sqft x 8 sqft/ft (one face x 8 ft)."
+        },
+        "install house wrap (WRB)": {
+          "lh_per_ft": 0.035,
+          "range_lh_per_ft": [0.025, 0.05],
+          "role_split": { "carpenter": 0.3, "labourer": 0.7 },
+          "note": "~0.004 lh/sqft x 8.8 sqft/ft. Verify WRB detailing to OBC."
+        },
+        "install batt insulation R-22": {
+          "lh_per_ft": 0.048,
+          "range_lh_per_ft": [0.04, 0.07],
+          "role_split": { "carpenter": 0.2, "labourer": 0.8 },
+          "note": "~0.006 lh/sqft x 8 sqft/ft. Confirm required R-value against OBC SB-12 for the climate zone."
+        },
+        "install 6 mil poly vapour barrier": {
+          "lh_per_ft": 0.035,
+          "range_lh_per_ft": [0.025, 0.05],
+          "role_split": { "carpenter": 0.3, "labourer": 0.7 },
+          "note": "~0.004 lh/sqft x 8.8 sqft/ft, including acoustic sealant at laps/penetrations."
+        },
+        "hang drywall 1/2\" (interior face)": {
+          "lh_per_ft": 0.088,
+          "range_lh_per_ft": [0.07, 0.11],
+          "role_split": { "carpenter": 0.5, "labourer": 0.5 },
+          "note": "Hang only, one face. ~0.011 lh/sqft x 8 sqft/ft. Taping/finishing NOT included."
+        }
+      }
+    }
+  },
+  "area_assemblies": {
+    "_unit": "labour-hours per square foot of floor area",
+    "floor_system_ijoist_16oc": {
+      "label": "Floor system, wood I-joist @ 16\" O.C., glued/screwed subfloor - labour",
+      "crew": [
+        { "role": "carpenter", "count": 1, "note": "lead carpenter: layout, hangers, level" },
+        { "role": "carpenter", "count": 1, "note": "second carpenter" },
+        { "role": "labourer", "count": 1, "note": "stocks I-joists/sheets, glue, screws off" }
+      ],
+      "tasks": {
+        "set I-joists, rim board & hangers": {
+          "lh_per_sqft": 0.018,
+          "range_lh_per_sqft": [0.015, 0.025],
+          "role_split": { "carpenter": 0.5, "apprentice": 0.25, "labourer": 0.25 },
+          "note": "Layout, hangers, set joists at 16\" O.C., rim board, bridging/blocking. ~0.018 lh/sqft. Joist sizing/spans must come from the manufacturer/engineer."
+        },
+        "glue & screw T&G subfloor 3/4\"": {
+          "lh_per_sqft": 0.012,
+          "range_lh_per_sqft": [0.01, 0.015],
+          "role_split": { "carpenter": 0.4, "apprentice": 0.3, "labourer": 0.3 },
+          "note": "Bead adhesive on every joist, lay and screw sheets. ~0.012 lh/sqft."
+        }
+      }
+    }
+  }
+}
