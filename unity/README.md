@@ -12,80 +12,57 @@ export_ar.py  → .fbx (origin = CP_A) →  Model snaps onto the marks, is locke
                                         checked against the plan
 ```
 
-| File | Job |
+| File (in `SiteXR-Project/Assets/SiteXR/`) | Job |
 |------|-----|
-| `SiteXR/Runtime/SiteAligner.cs` | On-site app: crosshair, Mark A / Mark B, snap + anchor, tape check, nudge (1/8", 0.1°), hide/show, reset |
-| `SiteXR/Editor/SiteModelImporter.cs` | Imports anything in a `Site Models` folder at real scale with Blender axes fixed, and checks CP_A / CP_B |
+| `Runtime/SiteAligner.cs` | On-site app: crosshair, Mark A / Mark B, snap + anchor, tape check, nudge (1/8", 0.1°), hide/show, reset |
+| `Editor/SiteModelImporter.cs` | Imports anything in `Assets/Site Models` at real scale with Blender axes fixed, and checks CP_A / CP_B |
+| `Editor/SiteXRBootstrap.cs` | First open: installs the newest AR Foundation + ARKit for your Unity version |
+| `Setup/SiteXRSetup.cs` | First open: builds the AR scene, enables ARKit, sets iOS camera permission + bundle ID, switches to iOS |
 
-## Package layout
+## Open the project
 
-`SiteXR/` is a self-contained UPM package:
+**Needs:** Unity 6 LTS (or 2022.3 LTS) with **iOS Build Support**, Xcode, and an
+Apple ID. `../setup-mac.sh` installs Unity Hub and checks the rest.
 
-```
-SiteXR/
-  package.json                     UPM manifest (depends on AR Foundation)
-  Runtime/
-    SiteXR.Runtime.asmdef          references AR Foundation + AR Subsystems
-    SiteAligner.cs                 the on-site MonoBehaviour
-  Editor/
-    SiteXR.Editor.asmdef           Editor-only
-    SiteModelImporter.cs           import post-processor for "Site Models" folders
-```
+1. Unity Hub → **Add** → **Add project from disk** → pick `unity/SiteXR-Project`.
+   If asked which editor, pick Unity 6.
+2. Open it and watch the Console (Window → General → Console). First open takes
+   a few minutes:
+   - `site model OK. CP_A -> CP_B = 4.877 m (16' 0.00")`: the wall imported at real scale
+   - `SiteXR: installing AR Foundation + ARKit...` then `AR packages installed`
+   - `SiteXR setup:` with `scene OK`, `ARKit enabled` and `iOS build target active`
+3. **Build**: plug in your iPad/iPhone, then File → Build And Run. In Xcode, pick your
+   Apple ID under *Signing & Capabilities → Team* and press ▶. On the device,
+   trust the developer in Settings → General → VPN & Device Management the first time.
 
-The assembly definitions keep SiteXR in its own assemblies rather than
-`Assembly-CSharp`, so it drops cleanly into any project.
+To use your own model, drop its `.fbx` into `Assets/Site Models` and drag it into
+the *Site Aligner* object's **Model Prefab** slot in `Assets/Scenes/Site.unity`.
 
-Status: the alignment and geometry math has been audited by hand and is
-correct; it has not yet been run on-device, so expect to shake out small
-scene-wiring details on the first build. Written for Unity 2022.3 LTS or
-Unity 6 with AR Foundation 5 or 6.
+**Status:** none of this has been run in Unity yet. It's syntax-checked, and the
+alignment math has been audited by hand (yaw, scale, imperial rounding — all
+confirmed correct). If a line in the Console says something failed, it also says
+the one manual fix (e.g. tick ARKit in XR Plug-in Management). Paste any red
+errors to Claude.
 
-## Install
+<details><summary>Manual setup (if the automatic setup fails)</summary>
 
-**Option A — Package Manager (recommended).** Window → Package Manager →
-`+` → *Add package from git URL…* and enter:
+1. Window → Package Manager → Unity Registry: install *AR Foundation* and *Apple ARKit XR Plugin*.
+2. Project Settings → XR Plug-in Management → iOS tab: tick *ARKit*.
+   Player → iOS → *Camera Usage Description*: "Camera is used for AR".
+3. New empty scene: GameObject → XR → *AR Session*, and GameObject → XR → *XR Origin (Mobile AR)*.
+   On the XR Origin add *AR Plane Manager*, *AR Raycast Manager*, *AR Anchor Manager*.
+4. Empty GameObject → add *Site Aligner* → drag in the Raycast Manager, Anchor Manager and
+   `Assets/Site Models/stud_wall.fbx`.
+5. Save the scene, add it in Build Settings, switch platform to iOS.
+</details>
 
-```
-https://github.com/cristyandavid/David-s-.git?path=unity/SiteXR
-```
+### Android build (optional)
 
-Or, for a local checkout, *Add package from disk…* → pick `unity/SiteXR/package.json`.
-
-**Option B — copy in.** Copy this repo's `unity/SiteXR` folder into your
-project's `Assets/`.
-
-Either way, Package Manager will pull in **AR Foundation** automatically. You
-still add a provider yourself (next section).
-
-## One-time project setup
-
-1. **Project template:** *3D (URP)* or *3D*.
-2. **Providers** (Window → Package Manager → Unity Registry): *Apple ARKit XR
-   Plugin* (iPhone/iPad) and/or *Google ARCore XR Plugin* (Android). AR
-   Foundation itself comes in with the package above.
-3. **XR** (Project Settings → XR Plug-in Management): tick *ARKit* on the iOS
-   tab and/or *ARCore* on the Android tab.
-4. **Scene:** delete the Main Camera, then add GameObject → XR → *AR Session*
-   and GameObject → XR → *XR Origin (Mobile AR)* (the name varies a little by version).
-   On the XR Origin, add *AR Plane Manager*, *AR Raycast Manager* and *AR Anchor Manager*.
-5. **Aligner:** create an empty GameObject, add *Site Aligner*, and drag in the
-   XR Origin's *AR Raycast Manager* and *AR Anchor Manager*.
-6. **Model:** make a folder `Assets/Site Models`, drop in the `.fbx` from
-   `export_ar.py` (try `blender-bridge/examples/ar/stud_wall.fbx`). The Console should
-   say `site model OK. CP_A -> CP_B = 4.877 m (16' 0.00")`. Drag the model into
-   Site Aligner's *Model Prefab* slot.
-
-## Build & deploy
-
-**iOS (iPhone / iPad):**
-- Player Settings → *Camera Usage Description*, e.g. "Camera is used for AR" (required, or the app is rejected/crashes on launch).
-- Player Settings → *Target minimum iOS Version* 12.0+ (ARKit); *Architecture* ARM64.
-- File → Build Settings → *iOS* → *Build*, open the generated Xcode project, set your signing *Team*, and Run to the device.
-
-**Android:**
-- Player Settings → *Minimum API Level* 24+ and *Scripting Backend* IL2CPP with *ARM64* ticked (ARCore requires it).
-- Player Settings → *Graphics APIs*: remove *Vulkan* if your ARCore version predates Vulkan support; keep *OpenGLES3*.
-- File → Build Settings → *Android* → *Build and Run* to the device.
+The project targets iOS out of the box. For Android:
+- Player Settings → *Minimum API Level* 24+, *Scripting Backend* IL2CPP, *ARM64* ticked (ARCore requires it).
+- Player Settings → *Graphics APIs*: keep *OpenGLES3* (remove *Vulkan* if your ARCore version predates Vulkan support).
+- Add the *Google ARCore XR Plugin* and tick *ARCore* on the Android tab of XR Plug-in Management.
+- File → Build Settings → *Android* → *Build and Run*.
 
 ## On site
 
