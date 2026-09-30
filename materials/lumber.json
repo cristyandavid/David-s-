@@ -1,0 +1,60 @@
+{
+  "_about": "Digital Ontario construction materials catalog. Dimensions and standard sizes are factual (SPF dimensional lumber per CSA O141 / NLGA rules, sheet goods at standard 4x8). Prices are intentionally absent here; put real supplier numbers in prices.example.json. Verify grades and code-required values against the current Ontario Building Code (OBC) for your project.",
+  "region": "Ontario, Canada",
+  "units": {
+    "length": "mm (imperial in parentheses in labels)",
+    "note": "Ontario framing is quoted imperially but lumber is milled to metric actuals. Both are given."
+  },
+  "dimensional_lumber": {
+    "species_default": "SPF",
+    "species_note": "SPF = Spruce-Pine-Fir, the standard Canadian framing group. Structural framing is typically No.2 & Better; wall studs may be Stud grade.",
+    "grades": ["Select Structural", "No.1", "No.2", "No.1/No.2", "Stud", "Construction", "Standard", "Utility"],
+    "sizes": [
+      { "nominal": "2x3", "actual_in": [1.5, 2.5],  "actual_mm": [38, 64] },
+      { "nominal": "2x4", "actual_in": [1.5, 3.5],  "actual_mm": [38, 89] },
+      { "nominal": "2x6", "actual_in": [1.5, 5.5],  "actual_mm": [38, 140] },
+      { "nominal": "2x8", "actual_in": [1.5, 7.25], "actual_mm": [38, 184] },
+      { "nominal": "2x10", "actual_in": [1.5, 9.25], "actual_mm": [38, 235] },
+      { "nominal": "2x12", "actual_in": [1.5, 11.25], "actual_mm": [38, 286] },
+      { "nominal": "1x4", "actual_in": [0.75, 3.5], "actual_mm": [19, 89] },
+      { "nominal": "1x6", "actual_in": [0.75, 5.5], "actual_mm": [19, 140] }
+    ],
+    "stock_lengths_ft": [8, 10, 12, 14, 16, 20],
+    "precut_studs": [
+      { "wall_height_ft": 8,  "stud_length": "92 5/8\"", "stud_length_mm": 2353 },
+      { "wall_height_ft": 9,  "stud_length": "104 5/8\"", "stud_length_mm": 2657 },
+      { "wall_height_ft": 10, "stud_length": "116 5/8\"", "stud_length_mm": 2962 }
+    ],
+    "precut_note": "Precut studs assume a single bottom plate + double top plate (3 x 1.5\" = 4.5\") added to reach the nominal wall height."
+  },
+  "engineered_lumber": [
+    { "type": "LVL", "name": "Laminated veneer lumber", "common_depths_in": [9.25, 11.25, 11.875, 14, 16, 18], "thickness_in": [1.75, 3.5], "use": "beams, headers" },
+    { "type": "I-joist", "name": "Wood I-joist", "common_depths_in": [9.5, 11.875, 14, 16], "use": "floor and roof framing" },
+    { "type": "PSL", "name": "Parallel strand lumber", "use": "columns, heavy beams" },
+    { "type": "Glulam", "name": "Glue-laminated timber", "use": "beams, exposed structure" },
+    { "type": "Rim board", "name": "Engineered rim board", "common_depths_in": [9.5, 11.875, 14, 16], "use": "closes the ends of I-joist floors" }
+  ],
+  "sheet_goods": [
+    { "name": "OSB sheathing", "size_ft": [4, 8], "thicknesses_in": [0.4375, 0.5, 0.625, 0.75], "use": "wall/roof sheathing, subfloor", "note": "7/16\" (11 mm) is standard wall sheathing." },
+    { "name": "Plywood", "size_ft": [4, 8], "thicknesses_in": [0.5, 0.625, 0.75], "use": "subfloor, sheathing, structural" },
+    { "name": "Tongue-and-groove subfloor", "size_ft": [4, 8], "thicknesses_in": [0.625, 0.75, 0.875, 1.125], "use": "floor deck" },
+    { "name": "Drywall (gypsum board)", "size_ft": [4, 8], "thicknesses_in": [0.5, 0.625], "types": ["Regular", "Type X (fire-rated)", "Moisture-resistant"], "use": "interior finish" },
+    { "name": "Exterior gypsum sheathing", "size_ft": [4, 8], "thicknesses_in": [0.5, 0.625], "use": "fire-rated / exterior wall sheathing" }
+  ],
+  "fasteners": [
+    { "name": "Framing nail 3-1/2\" (16d)", "use": "plates, studs, general framing", "collated": true },
+    { "name": "Framing nail 3\" (10d)", "use": "toe-nailing, blocking" },
+    { "name": "Sheathing nail 2-3/8\" (8d) ring", "use": "wall/roof sheathing, subfloor" },
+    { "name": "Subfloor screw #8 x 2-1/2\"", "use": "screwing/gluing subfloor" },
+    { "name": "Drywall screw #6 x 1-1/4\"", "use": "drywall to wood" },
+    { "name": "Joist hanger", "use": "joist-to-beam / ledger connections", "note": "size to the joist depth" },
+    { "name": "Construction adhesive (subfloor)", "unit": "tube (~825 mL)", "use": "glue-and-screw subfloor" }
+  ],
+  "weather_barrier_and_insulation": [
+    { "name": "House wrap", "unit": "roll", "roll_coverage_sqft": 1350, "use": "exterior water-resistive barrier" },
+    { "name": "Batt insulation R-22", "use": "2x6 exterior wall cavity (typical Ontario)", "note": "Confirm effective R-value against OBC SB-12 for your climate zone and assembly." },
+    { "name": "Batt insulation R-14", "use": "2x4 exterior wall cavity" },
+    { "name": "Rigid foam (XPS/EPS/Polyiso)", "unit": "4x8 sheet", "use": "continuous exterior insulation" },
+    { "name": "6 mil polyethylene vapour barrier", "unit": "roll", "use": "interior air/vapour barrier (verify against OBC)" }
+  ]
+}
