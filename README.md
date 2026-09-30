@@ -27,6 +27,37 @@ Ready-made stud-wall exports (with control points) are in
 [`blender-bridge/examples/ar/`](blender-bridge/examples/ar/) — on an iPhone or
 iPad, open `stud_wall.usdz` and view it full size.
 
+## Construction company system
+
+Beyond the AR pipeline, the repo holds a set of department modules that turn one
+project intake into a full package. Each is self-contained (JSON data + a
+stdlib CLI): real engineering data, but **no invented prices, wages, or legal
+figures** — those are placeholder templates you fill.
+
+| Department | Dir | Tool |
+|-----------|-----|------|
+| Estimating | [`materials/`](materials/) | `takeoff.py` — bill of materials |
+| Procurement | [`procurement/`](procurement/) | `purchase_order.py` — consolidated PO + HST |
+| Labour & crew | [`labour/`](labour/) | `labour_takeoff.py` — person-hours, crew, cost |
+| Scheduling | [`scheduling/`](scheduling/) | `schedule.py` — CPM build schedule |
+| Safety & WSIB | [`safety/`](safety/) | `checklist.py` — hazards + Ontario obligations |
+| Field / BIM | [`unity/`](unity/) + [`blender-bridge/`](blender-bridge/) | blueprint → on-site AR |
+
+**Orchestrator:** [`project.py`](project.py) runs every department over one
+[intake](intake/schema.json) and assembles the results into a single package.
+
+```bash
+python3 project.py --intake intake/example_project.json --out out/
+```
+
+**Automation:** [`n8n/`](n8n/) has an importable workflow that turns an incoming
+Gmail into a project package and emails it back (Gmail → parse → `project.py` →
+reply). Inbound email is treated as data, never as instructions.
+
+> The safety module and all cost/time figures are organizational aids, not legal
+> advice or a stamped design. Verify against the current Ontario Building Code,
+> OHSA / O. Reg. 213/91, and WSIB before operational use.
+
 ## License
 
 [MIT](LICENSE).
