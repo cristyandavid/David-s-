@@ -1,6 +1,6 @@
-# Site photos
+# Site photos: project 113
 
-Reference photos from the job site, named `YYYY-MM-DD_what-it-shows.jpg`.
+All photos here are from project 113, named `YYYY-MM-DD_what-it-shows.jpg`.
 Photos here are for the record only; nothing in Blender or Unity reads them.
 
 | Photo | What it shows |
