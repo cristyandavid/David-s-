@@ -76,7 +76,11 @@ for i, a in enumerate(ops):
             raise ValueError(f"{a['name']} and {b['name']} are too close together")
 
 # Plates
-add("Bottom Plate", "wood", 0, L, 0, T)
+# The bottom plate is cut out between the jack studs at doors
+cuts = sorted((o["x0"], o["x1"]) for o in ops if o["z0"] == 0)
+edges = [0.0] + [x for c in cuts for x in c] + [L]
+for i in range(0, len(edges), 2):
+    add("Bottom Plate" if len(cuts) == 0 else f"Bottom Plate {i // 2 + 1}", "wood", edges[i], edges[i + 1], 0, T)
 add("Top Plate 1", "wood", 0, L, H - 2 * T, H - T)
 add("Top Plate 2", "wood", 0, L, H - T, H)
 
@@ -168,7 +172,7 @@ if STRAPPING:
             add(f"Trim Sill ({name})", "strap", o["x0"] - T, o["x1"] + T, o["z0"] - D, o["z0"], y=t_y, depth=T)
 
 
-if bpy is not None:   # without Blender (e.g. cad/export_dxf.py) only the framing layout is built
+if bpy is not None and not globals().get("LAYOUT_ONLY"):   # LAYOUT_ONLY: just the framing list (cad/export_dxf.py)
     def material(name, rgb):
         mat = bpy.data.materials.new(name)
         mat.use_nodes = True

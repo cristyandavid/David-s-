@@ -52,9 +52,9 @@ top of the file, or just ask Claude for a different size.
 at 16 in. on center, a door and a window with king and jack studs, doubled 2x10
 headers, a sill and cripples, then 4x8 rigid foam on the outside, vertical
 strapping and trim round the openings. Set the wall size and the openings in
-the `OPENINGS` list at the top. It's not yet tested in Blender (the framing
-layout is checked for overlaps in plain Python); `FOAM` and `STRAPPING` switch
-the outer layers off.
+the `OPENINGS` list at the top. `FOAM` and `STRAPPING` switch the outer layers
+off. Run headless in Blender 5.0 (`pip install bpy`) together with
+`site_anchors.py` and `export_ar.py`; not yet run through the live bridge.
 
 ## AR / XR
 

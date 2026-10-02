@@ -32,7 +32,7 @@ OPENINGS = [{"name": "Front Window", "x": 30, "w": 72, "h": 48, "sill": 30}]   #
 M_TO_IN = 1 / 0.0254
 LAYERS = {"wood": ("FRAMING", 40), "foam": ("FOAM", 8), "strap": ("STRAPPING", 30)}
 
-layout = runpy.run_path(LAYOUT, init_globals={"WALL_FT": WALL_FT, "HEIGHT_FT": HEIGHT_FT,
+layout = runpy.run_path(LAYOUT, init_globals={"LAYOUT_ONLY": True, "WALL_FT": WALL_FT, "HEIGHT_FT": HEIGHT_FT,
                                               "OPENINGS": OPENINGS})
 members = layout["members"]
 
