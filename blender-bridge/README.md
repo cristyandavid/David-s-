@@ -48,6 +48,14 @@ Blender isn't in `/Applications`, run it as `BLENDER=/path/to/Blender ./setup.sh
 a bottom plate and a double top plate) and renders it. Edit the numbers at the
 top of the file, or just ask Claude for a different size.
 
+`examples/wall_with_openings.py` builds the wall as it goes up on site: studs
+at 16 in. on center, a door and a window with king and jack studs, doubled 2x10
+headers, a sill and cripples, then 4x8 rigid foam on the outside, vertical
+strapping and trim round the openings. Set the wall size and the openings in
+the `OPENINGS` list at the top. It's not yet tested in Blender (the framing
+layout is checked for overlaps in plain Python); `FOAM` and `STRAPPING` switch
+the outer layers off.
+
 ## AR / XR
 
 Three scripts take a model from Blender to the job site:
