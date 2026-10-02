@@ -16,15 +16,18 @@ The outside face is -Y. Edit the numbers below to match your wall.
 
 import os
 
-import bpy
+try:
+    import bpy
+except ImportError:   # plain Python: lets cad/export_dxf.py reuse the layout
+    bpy = None
 
-WALL_FT = 12      # wall length
-HEIGHT_FT = 8     # overall height, bottom plate to top plates
+WALL_FT = globals().get("WALL_FT", 12)      # wall length
+HEIGHT_FT = globals().get("HEIGHT_FT", 8)     # overall height, bottom plate to top plates
 SPACING_IN = 16   # stud spacing, on center
 # Rough openings, in inches. x = from the left end of the wall to the left edge
 # of the opening. h = rough opening height. sill = floor to the bottom of the
 # opening (0 for a door).
-OPENINGS = [
+OPENINGS = globals().get("OPENINGS") or [
     {"name": "Door",   "x": 24, "w": 38, "h": 82, "sill": 0},
     {"name": "Window", "x": 84, "w": 26, "h": 26, "sill": 42},
 ]
@@ -165,60 +168,61 @@ if STRAPPING:
             add(f"Trim Sill ({name})", "strap", o["x0"] - T, o["x1"] + T, o["z0"] - D, o["z0"], y=t_y, depth=T)
 
 
-def material(name, rgb):
-    mat = bpy.data.materials.new(name)
-    mat.use_nodes = True
-    mat.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (*rgb, 1)
-    return mat
+if bpy is not None:   # without Blender (e.g. cad/export_dxf.py) only the framing layout is built
+    def material(name, rgb):
+        mat = bpy.data.materials.new(name)
+        mat.use_nodes = True
+        mat.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (*rgb, 1)
+        return mat
 
 
-# Clear the scene by hand. Don't use read_factory_settings/read_homefile:
-# they reset preferences, which disables the Claude Bridge add-on mid-request.
-scene = bpy.context.scene
-for obj in list(scene.objects):
-    bpy.data.objects.remove(obj, do_unlink=True)
-for datablocks in (bpy.data.meshes, bpy.data.materials, bpy.data.cameras,
-                   bpy.data.lights, bpy.data.worlds):
-    for block in list(datablocks):
-        if block.users == 0:
-            datablocks.remove(block)
+    # Clear the scene by hand. Don't use read_factory_settings/read_homefile:
+    # they reset preferences, which disables the Claude Bridge add-on mid-request.
+    scene = bpy.context.scene
+    for obj in list(scene.objects):
+        bpy.data.objects.remove(obj, do_unlink=True)
+    for datablocks in (bpy.data.meshes, bpy.data.materials, bpy.data.cameras,
+                       bpy.data.lights, bpy.data.worlds):
+        for block in list(datablocks):
+            if block.users == 0:
+                datablocks.remove(block)
 
-mats = {
-    "wood": material("SPF Lumber", (0.80, 0.58, 0.33)),
-    "foam": material("Rigid Foam", (0.62, 0.66, 0.66)),
-    "strap": material("Strapping", (0.88, 0.72, 0.48)),
-}
-floor = material("Floor", (0.25, 0.25, 0.27))
-for name, kind, size, loc in members:
-    bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
-    obj = bpy.context.object
-    obj.name = name
-    obj.scale = size
-    obj.data.materials.append(mats[kind])
+    mats = {
+        "wood": material("SPF Lumber", (0.80, 0.58, 0.33)),
+        "foam": material("Rigid Foam", (0.62, 0.66, 0.66)),
+        "strap": material("Strapping", (0.88, 0.72, 0.48)),
+    }
+    floor = material("Floor", (0.25, 0.25, 0.27))
+    for name, kind, size, loc in members:
+        bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
+        obj = bpy.context.object
+        obj.name = name
+        obj.scale = size
+        obj.data.materials.append(mats[kind])
 
-bpy.ops.mesh.primitive_plane_add(size=40, location=(L / 2, 0, 0))
-bpy.context.object.name = "Floor"
-bpy.context.object.data.materials.append(floor)
+    bpy.ops.mesh.primitive_plane_add(size=40, location=(L / 2, 0, 0))
+    bpy.context.object.name = "Floor"
+    bpy.context.object.data.materials.append(floor)
 
-bpy.ops.object.light_add(type="SUN", rotation=(0.9, 0.3, 0.7))
-bpy.context.object.data.energy = 3
+    bpy.ops.object.light_add(type="SUN", rotation=(0.9, 0.3, 0.7))
+    bpy.context.object.data.energy = 3
 
-target = bpy.data.objects.new("Camera Target", None)
-target.location = (L / 2, 0, H / 2)
-scene.collection.objects.link(target)
-bpy.ops.object.camera_add(location=(L / 2 + 2.5, -7.5, 1.6))
-cam = bpy.context.object
-cam.constraints.new("TRACK_TO").target = target
-scene.camera = cam
+    target = bpy.data.objects.new("Camera Target", None)
+    target.location = (L / 2, 0, H / 2)
+    scene.collection.objects.link(target)
+    bpy.ops.object.camera_add(location=(L / 2 + 2.5, -7.5, 1.6))
+    cam = bpy.context.object
+    cam.constraints.new("TRACK_TO").target = target
+    scene.camera = cam
 
-scene.world = bpy.data.worlds.new("Sky")
-scene.world.color = (0.35, 0.42, 0.55)
-scene.render.engine = "CYCLES"
-scene.cycles.samples = 32
-scene.render.resolution_x, scene.render.resolution_y = 1200, 700
-scene.render.filepath = OUT
-bpy.ops.render.render(write_still=True)
+    scene.world = bpy.data.worlds.new("Sky")
+    scene.world.color = (0.35, 0.42, 0.55)
+    scene.render.engine = "CYCLES"
+    scene.cycles.samples = 32
+    scene.render.resolution_x, scene.render.resolution_y = 1200, 700
+    scene.render.filepath = OUT
+    bpy.ops.render.render(write_still=True)
 
-result = {"members": len(members), "openings": [o["name"] for o in ops],
-          "wall_ft": WALL_FT, "render": OUT}
-print(result)
+    result = {"members": len(members), "openings": [o["name"] for o in ops],
+              "wall_ft": WALL_FT, "render": OUT}
+    print(result)
