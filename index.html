@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OntarioSim Live</title>
+<meta name="description" content="Live robot fleet digital twin over real downtown Toronto.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e141b'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23f28c28'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%2349e3ff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+:root{
+  --bg:#0b1016; --panel:#111922ee; --line:#223040; --text:#dce6ef; --muted:#7f93a6;
+  --accent:#f28c28; --cyan:#49e3ff; --ok:#6fdc8c; --warn:#ffcc4d; --bad:#ff6b6b;
+  --daily:#49e3ff; --weekly:#6fdc8c; --monthly:#ffcc4d; --yearly:#ff7ab8; --manual:#b9c4cf;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.4 "IBM Plex Sans",system-ui,sans-serif}
+#map{position:fixed;inset:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+#panel{position:fixed;top:12px;right:12px;bottom:12px;width:380px;background:var(--panel);backdrop-filter:blur(8px);
+  border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;z-index:2}
+header{padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:15px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.sub{color:var(--muted);font-size:12px;margin-top:2px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--ok);letter-spacing:.08em}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:p 1.6s infinite}
+.live.stale{color:var(--bad)} .live.stale i{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+@keyframes p{50%{opacity:.35}}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.kpi{background:#0b1218;border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+.kpi b{display:block;font:600 16px "IBM Plex Mono",monospace}
+.kpi span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+nav{display:flex;border-bottom:1px solid var(--line)}
+nav button{flex:1;background:none;border:0;color:var(--muted);padding:9px 4px;font:500 12px "IBM Plex Sans";cursor:pointer;border-bottom:2px solid transparent}
+nav button.on{color:var(--text);border-color:var(--accent)}
+.body{flex:1;overflow:auto;padding:10px 14px 16px}
+.sec{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+.row{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #1a2532}
+.row:last-child{border-bottom:0}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex:none}
+.grow{flex:1;min-width:0}
+.t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m{color:var(--muted);font-size:12px}
+.tag{font:600 10px "IBM Plex Mono";padding:1px 6px;border-radius:4px;border:1px solid currentColor;text-transform:uppercase}
+.bar{height:4px;background:#1a2532;border-radius:2px;margin-top:5px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.btn{background:#18222d;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:6px 10px;font:500 12px "IBM Plex Sans";cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.sm{padding:3px 8px;font-size:11px}
+.btns{display:flex;flex-wrap:wrap;gap:6px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#18222d;border:1px solid var(--line);padding:8px 14px;border-radius:8px;z-index:5;opacity:0;transition:.3s}
+.toast.on{opacity:1}
+.robot{width:22px;height:22px;position:relative;cursor:pointer}
+.robot .chassis{position:absolute;inset:3px;border-radius:5px;border:2px solid #0b1016;box-shadow:0 0 10px rgba(0,0,0,.6)}
+.robot .nose{position:absolute;left:50%;top:-6px;width:0;height:0;margin-left:-5px;border:5px solid transparent;border-bottom:8px solid var(--cyan)}
+.robot .lbl{position:absolute;top:24px;left:50%;transform:translateX(-50%);font:600 10px "IBM Plex Mono";color:#fff;text-shadow:0 0 3px #000,0 0 3px #000;white-space:nowrap}
+.foot{padding:8px 14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+@media (max-width:720px){
+  #panel{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:52vh}
+}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<aside id="panel">
+  <header>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1>OntarioSim Live</h1>
+      <span class="live" id="live"><i></i><span id="liveTxt">CONNECTING</span></span>
+    </div>
+    <div class="sub">Robot fleet over real downtown Toronto · cloud runs 24/7 · <span class="mono" id="clock">--:--:--</span> Toronto</div>
+    <div class="kpis">
+      <div class="kpi"><b id="kFleet">-</b><span>Fleet</span></div>
+      <div class="kpi"><b id="kActive">-</b><span>Active</span></div>
+      <div class="kpi"><b id="kQueued">-</b><span>Queued</span></div>
+      <div class="kpi"><b id="kKm">-</b><span>Km done</span></div>
+    </div>
+  </header>
+  <nav>
+    <button data-tab="fleet" class="on">Fleet</button>
+    <button data-tab="jobs">Jobs</button>
+    <button data-tab="ops">Operations</button>
+    <button data-tab="log">Log</button>
+  </nav>
+  <div class="body" id="body"></div>
+  <div class="foot">Map © OpenStreetMap contributors · OpenFreeMap · Straight-line routing between landmarks</div>
+</aside>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = "https://bbkfqekydtinxgozzfdb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_YI4IPLwoLAtFcArVJYiW8g_I5wTAelt";
+const TZ = "America/Toronto";
+const CAD = {daily:"var(--daily)",weekly:"var(--weekly)",monthly:"var(--monthly)",yearly:"var(--yearly)",manual:"var(--manual)",fleet:"var(--accent)"};
+const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+let state = null, clockOffset = 0, tab = "fleet", lastOk = 0, follow = null;
+const markers = {};
+
+async function rpc(fn, args){
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method:"POST", headers:{apikey:SUPABASE_KEY, Authorization:`Bearer ${SUPABASE_KEY}`, "Content-Type":"application/json"},
+    body: JSON.stringify(args || {})
+  });
+  const body = await r.json().catch(()=>null);
+  if(!r.ok) throw new Error(body && body.message || r.statusText);
+  return body;
+}
+
+// ---- plan geometry: mirrors sim.plan_position in the database ----
+function segLen(a,b){
+  const k = Math.cos((a[0]+b[0])/2*Math.PI/180);
+  return Math.hypot((b[1]-a[1])*k*111320, (b[0]-a[0])*110540);
+}
+function segHeading(a,b){
+  const k = Math.cos((a[0]+b[0])/2*Math.PI/180);
+  return (Math.atan2((b[1]-a[1])*k, b[0]-a[0])*180/Math.PI + 360) % 360;
+}
+function planPosition(r, nowMs){
+  const P = r.plan_points, n = P.length, c = r.plan_cycle_from;
+  let d = Math.max(0,(nowMs - Date.parse(r.plan_started_at))/1000) * r.speed_ms;
+  if(n === 1) return {lat:P[0][0], lon:P[0][1], heading:0};
+  const segs = [];
+  for(let i=0;i<n-1;i++) segs.push([P[i],P[i+1], c!=null && i>=c]);
+  if(c!=null && n-1>c) segs.push([P[n-1],P[c],true]);
+  let pre=0, cyc=0; segs.forEach(s=>{ const L=segLen(s[0],s[1]); s.push(L); s[2]?cyc+=L:pre+=L; });
+  if(c!=null && cyc>0 && d>pre) d = pre + ((d-pre) % cyc);
+  for(const s of segs){
+    const L = s[3];
+    if(d <= L){ const f = L>0 ? d/L : 1;
+      return {lat:s[0][0]+(s[1][0]-s[0][0])*f, lon:s[0][1]+(s[1][1]-s[0][1])*f, heading:segHeading(s[0],s[1])}; }
+    d -= L;
+  }
+  const last = P[n-1];
+  return {lat:last[0], lon:last[1], heading: segHeading(P[n-2],P[n-1])};
+}
+function jobProgress(r, nowMs){
+  if(r.plan_cycle_from != null) return null;
+  let total=0; for(let i=0;i<r.plan_points.length-1;i++) total += segLen(r.plan_points[i], r.plan_points[i+1]);
+  const d = Math.max(0,(nowMs - Date.parse(r.plan_started_at))/1000) * r.speed_ms;
+  return {frac: total>0 ? Math.min(1,d/total) : 1, remainS: Math.max(0,(total-d)/r.speed_ms)};
+}
+
+// ---- formatting (Toronto time) ----
+function parts(iso){
+  const f = new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",weekday:"short",hour12:false});
+  const o = {}; f.formatToParts(new Date(iso)).forEach(p=>o[p.type]=p.value); return o;
+}
+function fmtTime(iso){ if(!iso) return "-"; const p=parts(iso); return `${p.hour}:${p.minute}`; }
+function fmtWhen(iso){
+  if(!iso) return "-"; const p = parts(iso), today = parts(new Date(Date.now()+clockOffset).toISOString());
+  const same = p.year===today.year && p.month===today.month && p.day===today.day;
+  return same ? `today ${p.hour}:${p.minute}` : `${p.weekday} ${MON[+p.month-1]} ${+p.day}${p.year!==today.year?" "+p.year:""}, ${p.hour}:${p.minute}`;
+}
+function fmtDur(s){ s=Math.round(s); return s<60?`${s}s`: s<3600?`${Math.floor(s/60)}m ${s%60}s`:`${Math.floor(s/3600)}h ${Math.floor(s/60)%60}m`; }
+function esc(s){ return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function tag(src){ return `<span class="tag" style="color:${CAD[src]||"var(--muted)"}">${esc(src)}</span>`; }
+function cadenceText(o){
+  if(o.cadence==="daily") return `Every day ${o.time}`;
+  if(o.cadence==="weekly") return `Every ${DOW[o.weekday]} ${o.time}`;
+  if(o.cadence==="monthly") return o.day>=28 ? `Monthly, day ${o.day} (or last day) ${o.time}` : `Monthly, day ${o.day} ${o.time}`;
+  return `Yearly, ${MON[o.month-1]} ${o.day} ${o.time}`;
+}
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),2600); }
+
+// ---- map ----
+const map = new maplibregl.Map({
+  container:"map", style:"https://tiles.openfreemap.org/styles/liberty",
+  center:[-79.3832,43.6470], zoom:14.6, pitch:55, bearing:-17, antialias:true, attributionControl:false
+});
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}), "top-left");
+map.addControl(new maplibregl.AttributionControl({compact:true}), "bottom-left");
+
+map.on("load", ()=>{
+  const style = map.getStyle();
+  const has3d = style.layers.some(l=>l.type==="fill-extrusion");
+  if(!has3d && style.sources.openmaptiles){
+    map.addLayer({id:"bldg-3d",type:"fill-extrusion",source:"openmaptiles","source-layer":"building",minzoom:13,
+      paint:{"fill-extrusion-color":"#9aa6b2","fill-extrusion-height":["coalesce",["get","render_height"],10],
+             "fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":0.85}});
+  }
+  map.addSource("plans",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+  map.addLayer({id:"plans",type:"line",source:"plans",paint:{"line-color":["get","color"],"line-width":3,"line-opacity":0.85,"line-dasharray":[2,1.2]}});
+  map.addSource("stops",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+  map.addLayer({id:"stops",type:"circle",source:"stops",paint:{"circle-radius":4,"circle-color":"#0b1016","circle-stroke-color":["get","color"],"circle-stroke-width":2}});
+  refresh();
+});
+map.on("dragstart", ()=>{ follow = null; });
+
+function updatePlansLayer(){
+  if(!state || !map.getSource("plans")) return;
+  const lines=[], pts=[];
+  state.robots.forEach(r=>{
+    const coords = r.plan_points.map(p=>[p[1],p[0]]);
+    if(r.plan_cycle_from!=null && coords.length>1) coords.push(coords[r.plan_cycle_from]);
+    lines.push({type:"Feature",properties:{color:r.job_id? r.color : r.color+"66"},geometry:{type:"LineString",coordinates:coords}});
+    r.plan_points.slice(1).forEach(p=>pts.push({type:"Feature",properties:{color:r.color},geometry:{type:"Point",coordinates:[p[1],p[0]]}}));
+  });
+  map.getSource("plans").setData({type:"FeatureCollection",features:lines});
+  map.getSource("stops").setData({type:"FeatureCollection",features:pts});
+}
+
+function ensureMarker(r){
+  if(markers[r.id]) return markers[r.id];
+  const el = document.createElement("div");
+  el.className="robot";
+  el.innerHTML=`<div class="chassis" style="background:${r.color}"></div><div class="nose"></div><div class="lbl">${esc(r.id)}</div>`;
+  el.addEventListener("click",()=>{ follow = r.id; toast(`Following ${r.id}`); });
+  const m = new maplibregl.Marker({element:el, rotationAlignment:"map", pitchAlignment:"map"}).setLngLat([r.lon,r.lat]).addTo(map);
+  markers[r.id] = m; return m;
+}
+
+function animate(){
+  if(state){
+    const now = Date.now() + clockOffset;
+    state.robots.forEach(r=>{
+      const p = planPosition(r, now), m = ensureMarker(r);
+      m.setLngLat([p.lon,p.lat]); m.setRotation(p.heading);
+      if(follow===r.id) map.easeTo({center:[p.lon,p.lat],duration:0});
+    });
+    document.getElementById("clock").textContent = (()=>{const p=parts(new Date(now).toISOString());return `${p.hour}:${p.minute}:${p.second}`})();
+  }
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+// ---- panel ----
+function render(){
+  if(!state) return;
+  const s = state, now = Date.now()+clockOffset;
+  document.getElementById("kFleet").textContent = `${s.robots.length}/${s.totals.max_fleet}`;
+  document.getElementById("kActive").textContent = s.active.length;
+  document.getElementById("kQueued").textContent = s.queued.length;
+  document.getElementById("kKm").textContent = s.totals.distance_km;
+  let h = "";
+  if(tab==="fleet"){
+    h += `<div class="sec">Robots</div>`;
+    s.robots.forEach(r=>{
+      const pr = jobProgress(r, now);
+      h += `<div class="row"><span class="dot" style="background:${r.color}"></span><div class="grow">
+        <div class="t">${esc(r.id)} <span class="m">· ${r.speed_ms} m/s</span></div>
+        <div class="m">${r.job_id? esc(r.job) : "Free tour (available)"}</div>
+        ${pr? `<div class="bar"><i style="width:${(pr.frac*100).toFixed(1)}%"></i></div><div class="m mono">${(pr.frac*100).toFixed(0)}% · ${fmtDur(pr.remainS)} left</div>`:""}
+      </div><button class="btn sm" onclick="follow='${r.id}'">Follow</button></div>`;
+    });
+    h += `<div class="sec">Dispatch a job now</div><div class="btns">
+      <button class="btn" onclick="queue('DowntownTour','patrol',3)">Downtown patrol x3</button>
+      <button class="btn" onclick="queue('UnionStation','goto',1)">Deliver to Union</button>
+      <button class="btn" onclick="queue('HarbourSurvey','patrol',2)">Harbour survey x2</button>
+      <button class="btn" onclick="queue('QueensPark','goto',1)">Courier to Queen's Park</button>
+      <button class="btn" onclick="spawn()">+ Spawn robot</button>
+      <button class="btn" onclick="follow=null;map.flyTo({center:[-79.3832,43.647],zoom:14.6,pitch:55,bearing:-17})">Reset view</button></div>`;
+  }
+  if(tab==="jobs"){
+    h += `<div class="sec">Active</div>`;
+    if(!s.active.length) h += `<div class="m">No active jobs. Robots are on their free tour.</div>`;
+    s.active.forEach(j=>{ const r = s.robots.find(x=>x.id===j.robot_id); const pr = r && jobProgress(r, now);
+      h += `<div class="row"><div class="grow"><div class="t">#${j.id} ${esc(j.name)}</div>
+      <div class="m">${tag(j.source)} ${esc(j.robot_id)} · started ${fmtTime(j.started_at)} · ${(j.distance_m/1000).toFixed(2)} km</div>
+      ${pr?`<div class="bar"><i style="width:${(pr.frac*100).toFixed(1)}%"></i></div>`:""}</div></div>`; });
+    h += `<div class="sec">Queued (priority order)</div>`;
+    if(!s.queued.length) h += `<div class="m">Queue is empty.</div>`;
+    s.queued.forEach(j=>{ h += `<div class="row"><div class="grow"><div class="t">#${j.id} ${esc(j.name)}</div>
+      <div class="m">${tag(j.source)} priority ${j.priority} · queued ${fmtTime(j.queued_at)}</div></div></div>`; });
+    h += `<div class="sec">Recently completed</div>`;
+    if(!s.recent.length) h += `<div class="m">Nothing completed yet.</div>`;
+    s.recent.forEach(j=>{ h += `<div class="row"><div class="grow"><div class="t">✓ #${j.id} ${esc(j.name)}</div>
+      <div class="m">${tag(j.source)} ${esc(j.robot_id)} · ${fmtWhen(j.finished_at)} · ${fmtDur((Date.parse(j.finished_at)-Date.parse(j.started_at))/1000)}</div></div></div>`; });
+  }
+  if(tab==="ops"){
+    ["daily","weekly","monthly","yearly"].forEach(c=>{
+      const ops = s.operations.filter(o=>o.cadence===c); if(!ops.length) return;
+      h += `<div class="sec" style="color:${CAD[c]}">${c}</div>`;
+      ops.forEach(o=>{ h += `<div class="row"><span class="dot" style="background:${CAD[c]}"></span><div class="grow">
+        <div class="t">${esc(o.name)}</div><div class="m">${cadenceText(o)} · ${esc(s.routes[o.route]?.label||o.route)}</div>
+        <div class="m mono">next ${fmtWhen(o.next_run)} · runs ${o.runs}${o.missed?` · missed ${o.missed}`:""}${o.skipped?` · skipped ${o.skipped}`:""}</div>
+      </div><button class="btn sm" onclick="runOp(${o.id})">Run now</button></div>`; });
+    });
+  }
+  if(tab==="log"){
+    h += `<div class="sec">Event log (latest 25)</div>`;
+    s.events.forEach(e=>{ h += `<div class="row"><div class="grow"><div class="t mono" style="font-size:12px">${fmtTime(e.at)} ${esc(e.event)} ${e.job_id?`#${e.job_id}`:""}</div>
+      <div class="m">${e.source?tag(e.source):""} ${esc(e.robot_id||"")} ${esc(e.note||"")}</div></div></div>`; });
+  }
+  const body = document.getElementById("body"), top = body.scrollTop;
+  body.innerHTML = h; body.scrollTop = top;
+}
+
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); tab=b.dataset.tab; render();
+}));
+
+async function refresh(){
+  try{
+    const s = await rpc("fleet_state");
+    clockOffset = Date.parse(s.server_time) - Date.now();
+    state = s; lastOk = Date.now();
+    updatePlansLayer(); render();
+  }catch(e){ console.warn(e); }
+  const stale = Date.now()-lastOk > 15000;
+  document.getElementById("live").classList.toggle("stale", stale);
+  document.getElementById("liveTxt").textContent = stale ? "RECONNECTING" : "LIVE";
+}
+setInterval(refresh, 3000);
+setInterval(()=>{ if(tab==="fleet"||tab==="jobs") render(); }, 1000);
+
+async function queue(route, kind, laps){ try{ const id = await rpc("queue_job",{p_route:route,p_kind:kind,p_laps:laps}); toast(`Job #${id} queued`); refresh(); }catch(e){ toast(e.message); } }
+async function runOp(id){ try{ const j = await rpc("run_operation",{p_op:id}); toast(`Job #${j} queued`); refresh(); }catch(e){ toast(e.message); } }
+async function spawn(){ try{ const r = await rpc("spawn_robot"); toast(`${r} added to fleet`); refresh(); }catch(e){ toast(e.message); } }
+</script>
+</body>
+</html>
