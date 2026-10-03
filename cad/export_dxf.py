@@ -30,11 +30,20 @@ HEIGHT_FT = 8
 OPENINGS = [{"name": "Front Window", "x": 30, "w": 72, "h": 48, "sill": 30}]   # the three-pane window
 
 M_TO_IN = 1 / 0.0254
-LAYERS = {"wood": ("FRAMING", 40), "foam": ("FOAM", 8), "strap": ("STRAPPING", 30)}
+LAYERS = {"wood": ("FRAMING", 40), "foam": ("FOAM", 8), "strap": ("STRAPPING", 30),
+          "brick": ("MASONRY", 1), "stone": ("STONE", 9)}
 
 layout = runpy.run_path(LAYOUT, init_globals={"LAYOUT_ONLY": True, "WALL_FT": WALL_FT, "HEIGHT_FT": HEIGHT_FT,
                                               "OPENINGS": OPENINGS})
 members = layout["members"]
+
+# ASSUMED porch pillar from the photos: brick pillar, stone cap, 6x6 post above it.
+# Inches; x, y = centre (y is negative on the outside), z = floor to top.
+PILLAR_X, PILLAR_Y = 118, -36
+for name, kind, w, z0, z1 in (("Brick Pillar", "brick", 16, 0, 38), ("Stone Cap", "stone", 20, 38, 41),
+                              ("Post 6x6", "wood", 5.5, 41, 96)):
+    members.append((name, kind, (w * 0.0254, w * 0.0254, (z1 - z0) * 0.0254),
+                    (PILLAR_X * 0.0254, PILLAR_Y * 0.0254, (z0 + z1) / 2 * 0.0254)))
 
 doc = ezdxf.new("R2000", setup=True)
 doc.units = ezdxf.units.IN
