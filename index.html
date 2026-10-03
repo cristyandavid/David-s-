@@ -53,10 +53,11 @@ nav button.on{color:var(--text);border-color:var(--accent)}
 .btns{display:flex;flex-wrap:wrap;gap:6px}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#18222d;border:1px solid var(--line);padding:8px 14px;border-radius:8px;z-index:5;opacity:0;transition:.3s}
 .toast.on{opacity:1}
-.robot{width:22px;height:22px;position:relative;cursor:pointer}
-.robot .chassis{position:absolute;inset:3px;border-radius:5px;border:2px solid #0b1016;box-shadow:0 0 10px rgba(0,0,0,.6)}
-.robot .nose{position:absolute;left:50%;top:-6px;width:0;height:0;margin-left:-5px;border:5px solid transparent;border-bottom:8px solid var(--cyan)}
-.robot .lbl{position:absolute;top:24px;left:50%;transform:translateX(-50%);font:600 10px "IBM Plex Mono";color:#fff;text-shadow:0 0 3px #000,0 0 3px #000;white-space:nowrap}
+.robot{width:30px;height:30px;position:relative;cursor:pointer;filter:drop-shadow(0 0 6px rgba(0,0,0,.7))}
+.robot .rot{position:absolute;inset:0}
+.robot .chassis{position:absolute;inset:4px;border-radius:6px;border:2px solid #fff}
+.robot .nose{position:absolute;left:50%;top:-9px;width:0;height:0;margin-left:-6px;border:6px solid transparent;border-bottom:10px solid var(--cyan)}
+.robot .lbl{position:absolute;top:32px;background:#0b1016cc;padding:1px 5px;border-radius:4px;left:50%;transform:translateX(-50%);font:600 10px "IBM Plex Mono";color:#fff;text-shadow:0 0 3px #000,0 0 3px #000;white-space:nowrap}
 .foot{padding:8px 14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
 @media (max-width:720px){
   #panel{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:52vh}
@@ -146,9 +147,9 @@ function jobProgress(r, nowMs){
 }
 
 // ---- formatting (Toronto time) ----
+const FMT = new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",weekday:"short",hour12:false});
 function parts(iso){
-  const f = new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",weekday:"short",hour12:false});
-  const o = {}; f.formatToParts(new Date(iso)).forEach(p=>o[p.type]=p.value); return o;
+  const o = {}; FMT.formatToParts(new Date(iso)).forEach(p=>o[p.type]=p.value); return o;
 }
 function fmtTime(iso){ if(!iso) return "-"; const p=parts(iso); return `${p.hour}:${p.minute}`; }
 function fmtWhen(iso){
@@ -208,9 +209,10 @@ function ensureMarker(r){
   if(markers[r.id]) return markers[r.id];
   const el = document.createElement("div");
   el.className="robot";
-  el.innerHTML=`<div class="chassis" style="background:${r.color}"></div><div class="nose"></div><div class="lbl">${esc(r.id)}</div>`;
+  el.innerHTML=`<div class="rot"><div class="chassis" style="background:${r.color}"></div><div class="nose"></div></div><div class="lbl">${esc(r.id)}</div>`;
+  el._rot = el.querySelector(".rot");
   el.addEventListener("click",()=>{ follow = r.id; toast(`Following ${r.id}`); });
-  const m = new maplibregl.Marker({element:el, rotationAlignment:"map", pitchAlignment:"map"}).setLngLat([r.lon,r.lat]).addTo(map);
+  const m = new maplibregl.Marker({element:el}).setLngLat([r.lon,r.lat]).addTo(map);
   markers[r.id] = m; return m;
 }
 
@@ -219,10 +221,9 @@ function animate(){
     const now = Date.now() + clockOffset;
     state.robots.forEach(r=>{
       const p = planPosition(r, now), m = ensureMarker(r);
-      m.setLngLat([p.lon,p.lat]); m.setRotation(p.heading);
+      m.setLngLat([p.lon,p.lat]); m.getElement()._rot.style.transform = `rotate(${p.heading - map.getBearing()}deg)`;
       if(follow===r.id) map.easeTo({center:[p.lon,p.lat],duration:0});
     });
-    document.getElementById("clock").textContent = (()=>{const p=parts(new Date(now).toISOString());return `${p.hour}:${p.minute}:${p.second}`})();
   }
   requestAnimationFrame(animate);
 }
@@ -306,7 +307,11 @@ async function refresh(){
   document.getElementById("liveTxt").textContent = stale ? "RECONNECTING" : "LIVE";
 }
 setInterval(refresh, 3000);
-setInterval(()=>{ if(tab==="fleet"||tab==="jobs") render(); }, 1000);
+setInterval(()=>{
+  const p = parts(new Date(Date.now()+clockOffset).toISOString());
+  document.getElementById("clock").textContent = `${p.hour}:${p.minute}:${p.second}`;
+  if(tab==="fleet"||tab==="jobs") render();
+}, 1000);
 
 async function queue(route, kind, laps){ try{ const id = await rpc("queue_job",{p_route:route,p_kind:kind,p_laps:laps}); toast(`Job #${id} queued`); refresh(); }catch(e){ toast(e.message); } }
 async function runOp(id){ try{ const j = await rpc("run_operation",{p_op:id}); toast(`Job #${j} queued`); refresh(); }catch(e){ toast(e.message); } }
