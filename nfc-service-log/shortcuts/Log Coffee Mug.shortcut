@@ -10,7 +10,7 @@
 			<key>WFWorkflowActionParameters</key>
 			<dict>
 				<key>UUID</key>
-				<string>563243F9-2DE9-43BB-9DAB-AAB5465930FE</string>
+				<string>190F7238-410C-4328-9F93-91F61248F3E9</string>
 				<key>WFHTTPBodyType</key>
 				<string>JSON</string>
 				<key>WFHTTPMethod</key>
@@ -102,7 +102,7 @@
 								<key>OutputName</key>
 								<string>Contents of URL</string>
 								<key>OutputUUID</key>
-								<string>563243F9-2DE9-43BB-9DAB-AAB5465930FE</string>
+								<string>190F7238-410C-4328-9F93-91F61248F3E9</string>
 								<key>Type</key>
 								<string>ActionOutput</string>
 							</dict>
