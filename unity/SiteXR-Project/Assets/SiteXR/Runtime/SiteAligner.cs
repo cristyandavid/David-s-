@@ -85,7 +85,16 @@ public class SiteAligner : MonoBehaviour
 
         Vector3 planDir = Flat(cpB.position - cpA.position);
         Vector3 siteDir = Flat(pointB - pointA);
-        if (siteDir.magnitude < 0.3f)
+        if (planDir.magnitude < 0.01f)
+        {
+            // CP_A and CP_B coincide in the model, so there's no heading to align
+            // to: SignedAngle / LookRotation would yield a garbage yaw. This is an
+            // export-time authoring error, so scrap the placement and re-export.
+            ResetAlignment();
+            Fail("Model's CP_A and CP_B are on the same point. Re-run site_anchors.py in Blender and re-export.");
+            return;
+        }
+        if (siteDir.magnitude < 0.3048f)  // 1 ft exactly
         {
             Fail("A and B are too close together. Mark two points at least 1 ft apart.");
             step = Step.MarkB;

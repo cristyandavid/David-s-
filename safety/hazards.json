@@ -1,0 +1,228 @@
+{
+  "_about": "Common Ontario construction tasks/phases mapped to typical hazards and GENERAL control categories. This is an organizational planning aid to prompt hazard assessment and pre-work discussion; it is NOT a legal compliance document and NOT a substitute for a site-specific hazard assessment. Control categories are kept general and defensible. Anywhere a specific legal threshold, distance, height, weight, or duration would be needed to act, the entry carries a VERIFY note pointing to the authoritative source. Confirm all requirements against the current Occupational Health and Safety Act (OHSA), O. Reg. 213/91 (Construction Projects), and WSIB, and against a competent person / JHSC on site.",
+  "_sources": {
+    "OHSA": "Occupational Health and Safety Act, R.S.O. 1990, c. O.1 (Ontario) - general duties of employers, supervisors, workers.",
+    "O_Reg_213_91": "O. Reg. 213/91 Construction Projects - the construction-specific regulation under OHSA (fall protection, guardrails, scaffolds, excavation, etc.). Specific thresholds and clause numbers must be read from the current regulation.",
+    "WSIB": "Workplace Safety and Insurance Board - coverage, registration, premium reporting, and injury reporting obligations.",
+    "training": "Working at Heights (WAH) training is required for certain work using fall protection on construction projects; the approved-training and refresher details must be verified against the Ministry (Ontario) requirements."
+  },
+  "_control_hierarchy": [
+    "Elimination / substitution (design out the hazard, e.g. prefab at ground level)",
+    "Engineering controls (guardrails, hole covers, shoring, ventilation, machine guarding)",
+    "Administrative controls (safe work procedures, training, signage, scheduling, permits)",
+    "Personal protective equipment (PPE) - last line of defence"
+  ],
+  "tasks": {
+    "general_site": {
+      "label": "General site / all phases (baseline hazards present on most construction work)",
+      "hazards": [
+        "Slips, trips, and falls on the level (debris, cords, uneven ground)",
+        "Struck-by moving equipment, vehicles, and materials",
+        "Manual material handling / musculoskeletal (MSD) injuries",
+        "Noise exposure",
+        "Weather / temperature (cold stress, heat stress, UV)",
+        "Housekeeping and combustible debris"
+      ],
+      "controls": [
+        "Site orientation / new-worker orientation before starting work",
+        "Housekeeping program and clear travel paths",
+        "Traffic-management / pedestrian separation from equipment",
+        "PPE: hard hat, safety footwear, high-visibility apparel, eye protection as required",
+        "Hearing protection where noise is significant (VERIFY: exposure limit and when protection is required - OHSA / noise regulation)",
+        "MSD controls: mechanical lifting aids, team lifts, training"
+      ],
+      "verify": [
+        "VERIFY: minimum PPE required by task and current specification/standard (e.g. footwear and eye-protection standards) - OHSA / O. Reg. 213/91",
+        "VERIFY: noise exposure limits and required controls - OHSA / Ontario noise regulation",
+        "VERIFY: which workers require site-specific orientation and its required content - employer policy / O. Reg. 213/91"
+      ]
+    },
+    "framing": {
+      "label": "Wood framing (walls, floors, roof framing)",
+      "hazards": [
+        "Falls from height (open floors, wall/roof work, leading edges)",
+        "Falls through floor/roof openings and holes",
+        "Struck-by falling tools or materials",
+        "Cuts / lacerations from saws and sharp material",
+        "Nail-gun contact injuries",
+        "Manual handling of lumber and panels (MSD)",
+        "Eye injury from flying debris"
+      ],
+      "controls": [
+        "Fall protection for work at heights (guardrails preferred; travel restraint / fall arrest where guardrails not practicable)",
+        "Cover or guard floor and roof openings; label covers",
+        "Guardrails at open edges",
+        "Tool tethering / exclusion zones below overhead work; hard hats",
+        "Saw guarding, sharp-blade discipline, cut-resistant gloves where appropriate",
+        "Sequential-trip nail guns and safe nail-gun handling procedures",
+        "Eye protection"
+      ],
+      "verify": [
+        "VERIFY: the height at which fall protection is required on a construction project - O. Reg. 213/91 (do NOT assume a number)",
+        "VERIFY: Working at Heights (WAH) training requirement and who must hold it before using fall-arrest systems - Ontario (Ministry) / O. Reg. 213/91",
+        "VERIFY: guardrail dimensions and load/strength requirements - O. Reg. 213/91",
+        "VERIFY: required capacity/inspection of hole covers - O. Reg. 213/91",
+        "VERIFY: fall-arrest anchor strength and maximum free-fall/clearance requirements - O. Reg. 213/91 / manufacturer"
+      ]
+    },
+    "roofing": {
+      "label": "Roofing / work on sloped or flat roofs",
+      "hazards": [
+        "Falls from roof edges and through skylights/openings",
+        "Slips on sloped or wet/icy surfaces",
+        "Struck-by / dropped materials to workers below",
+        "Heat stress and UV exposure",
+        "Burns / fumes from hot-work or torch-applied membranes (where used)"
+      ],
+      "controls": [
+        "Fall protection: guardrails, travel restraint, or fall arrest as appropriate to the roof",
+        "Guard or cover skylights and openings",
+        "Controlled ground zones below the roof; hard hats",
+        "Hot-work / fire-watch procedures where torches or open flame are used",
+        "Heat-stress management (water, rest, shade)"
+      ],
+      "verify": [
+        "VERIFY: fall-protection method and trigger height/slope for roof work - O. Reg. 213/91",
+        "VERIFY: Working at Heights training requirement - Ontario (Ministry)",
+        "VERIFY: hot-work / fire-safety and fire-extinguisher requirements if torch-applied roofing is used - Ontario Fire Code / O. Reg. 213/91"
+      ]
+    },
+    "excavation": {
+      "label": "Excavation / trenching",
+      "hazards": [
+        "Trench collapse / cave-in (soil failure)",
+        "Falls into excavation",
+        "Contact with buried utilities (gas, electrical, water)",
+        "Engulfment / burial",
+        "Hazardous atmosphere in deep excavations",
+        "Struck-by excavation equipment; spoil pile hazards"
+      ],
+      "controls": [
+        "Locate and mark buried utilities before digging (utility locate)",
+        "Protective systems: sloping, benching, shoring, or trench boxes as required by soil type and depth",
+        "Safe access/egress from the excavation",
+        "Keep spoil piles and equipment back from the edge",
+        "Barricade / guard the open excavation",
+        "Atmospheric testing where a hazardous atmosphere is possible"
+      ],
+      "verify": [
+        "VERIFY: depth at which a protective system (shoring/sloping/box) is required, and soil-type classifications and allowable slopes - O. Reg. 213/91 (do NOT assume a number)",
+        "VERIFY: minimum set-back distance for spoil piles and equipment from the excavation edge - O. Reg. 213/91",
+        "VERIFY: utility-locate obligation and process before excavation - Ontario One Call / utility owners",
+        "VERIFY: whether the excavation is a confined space and the applicable confined-space program - O. Reg. 632/05 / OHSA"
+      ]
+    },
+    "concrete_formwork": {
+      "label": "Concrete work and formwork",
+      "hazards": [
+        "Formwork / falsework collapse under load",
+        "Falls from formwork and elevated pours",
+        "Chemical burns / skin and eye irritation from wet concrete",
+        "Struck-by pump lines, buckets, rebar",
+        "Rebar impalement",
+        "MSD from handling forms and rebar"
+      ],
+      "controls": [
+        "Formwork/falsework designed and inspected for the intended load before the pour",
+        "Fall protection at elevated pours and form edges",
+        "PPE: waterproof gloves, eye protection, skin protection against wet concrete",
+        "Rebar caps / impalement protection on exposed vertical bar",
+        "Controlled zones around concrete pumping"
+      ],
+      "verify": [
+        "VERIFY: formwork/falsework design, drawing, and inspection requirements (and whether a professional engineer's design is required) - O. Reg. 213/91",
+        "VERIFY: rebar impalement-protection requirement - O. Reg. 213/91",
+        "VERIFY: fall-protection trigger for elevated pours - O. Reg. 213/91"
+      ]
+    },
+    "scaffolding": {
+      "label": "Scaffold erection, use, and dismantling",
+      "hazards": [
+        "Falls from or with the scaffold",
+        "Scaffold collapse / instability / overloading",
+        "Struck-by falling tools or materials",
+        "Falls during erection/dismantling (before guardrails exist)",
+        "Contact with overhead power lines"
+      ],
+      "controls": [
+        "Scaffold erected, inspected, and tagged by/under a competent person",
+        "Full guardrails and complete decking/platform planks",
+        "Stable, level base and proper tie-ins for height",
+        "Fall protection during erection/dismantling",
+        "Maintain safe clearance from overhead power lines",
+        "Toe boards / debris nets to protect workers below"
+      ],
+      "verify": [
+        "VERIFY: scaffold platform width, guardrail, capacity, and inspection/tagging requirements - O. Reg. 213/91 (do NOT assume dimensions)",
+        "VERIFY: minimum approach distance to overhead power lines by voltage - O. Reg. 213/91 / utility (do NOT assume a distance)",
+        "VERIFY: competent-person and design requirements for scaffolds above a given height - O. Reg. 213/91"
+      ]
+    },
+    "electrical": {
+      "label": "Electrical work / working near energized systems",
+      "hazards": [
+        "Electric shock / electrocution",
+        "Arc flash / arc blast and burns",
+        "Contact with overhead or buried power lines",
+        "Fire from faults or improper temporary power"
+      ],
+      "controls": [
+        "Lockout / tagout (de-energize and verify zero energy before work)",
+        "Only qualified/licensed persons perform electrical work",
+        "Maintain minimum approach distances to energized lines",
+        "GFCI / proper grounding on temporary construction power",
+        "Arc-flash-rated PPE where an arc-flash hazard exists"
+      ],
+      "verify": [
+        "VERIFY: lockout/tagout requirements and who may perform electrical work - OHSA / O. Reg. 213/91 / Ontario Electrical Safety Code / ESA",
+        "VERIFY: minimum approach distances to energized overhead lines by voltage - O. Reg. 213/91 / utility (do NOT assume a distance)",
+        "VERIFY: licensing requirement for electrical workers - Electrical Safety Authority (ESA)"
+      ]
+    },
+    "demolition": {
+      "label": "Demolition",
+      "hazards": [
+        "Unplanned / premature structural collapse",
+        "Falls and falling debris",
+        "Hazardous materials disturbed (asbestos, lead, silica, mould)",
+        "Dust and airborne contaminants",
+        "Struck-by heavy equipment"
+      ],
+      "controls": [
+        "Pre-demolition survey (including designated substances) before work starts",
+        "Planned demolition sequence; de-energize/disconnect services first",
+        "Dust suppression and respiratory protection as required",
+        "Exclusion zones and controlled access",
+        "Asbestos/lead abatement by qualified persons where present"
+      ],
+      "verify": [
+        "VERIFY: designated-substances assessment/survey required before demolition or renovation - OHSA / O. Reg. 490/09 (Designated Substances) / O. Reg. 278/05 (Asbestos)",
+        "VERIFY: asbestos work classification (Type 1/2/3) and required procedures - O. Reg. 278/05",
+        "VERIFY: silica exposure controls - OHSA / O. Reg. 490/09",
+        "VERIFY: notice-of-project / demolition permit obligations - O. Reg. 213/91 / local municipality"
+      ]
+    },
+    "material_handling_hoisting": {
+      "label": "Hoisting, cranes, and material handling",
+      "hazards": [
+        "Loads dropped or swinging; struck-by",
+        "Crane tip-over / overload / instability",
+        "Contact with overhead power lines during lifts",
+        "Rigging failure",
+        "Pinch points and caught-between injuries"
+      ],
+      "controls": [
+        "Certified operator and inspected, rated equipment and rigging",
+        "Lift planning; rated load charts respected; tag lines to control loads",
+        "Keep clear of overhead power lines; spotter/signaller",
+        "No one under suspended loads; controlled zones",
+        "Daily equipment and rigging inspection"
+      ],
+      "verify": [
+        "VERIFY: crane/hoist operator certification and equipment inspection/log requirements - O. Reg. 213/91",
+        "VERIFY: minimum clearance from overhead power lines during lifts by voltage - O. Reg. 213/91 / utility (do NOT assume a distance)",
+        "VERIFY: rigging inspection and rated-capacity marking requirements - O. Reg. 213/91"
+      ]
+    }
+  }
+}

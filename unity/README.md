@@ -39,9 +39,10 @@ To use your own model, drop its `.fbx` into `Assets/Site Models` and drag it int
 the *Site Aligner* object's **Model Prefab** slot in `Assets/Scenes/Site.unity`.
 
 **Status:** none of this has been run in Unity yet. It's syntax-checked, and the
-alignment math is simulated. If a line in the Console says something failed, it
-also says the one manual fix (e.g. tick ARKit in XR Plug-in Management). Paste
-any red errors to Claude.
+alignment math has been audited by hand (yaw, scale, imperial rounding — all
+confirmed correct). If a line in the Console says something failed, it also says
+the one manual fix (e.g. tick ARKit in XR Plug-in Management). Paste any red
+errors to Claude.
 
 <details><summary>Manual setup (if the automatic setup fails)</summary>
 
@@ -54,6 +55,14 @@ any red errors to Claude.
    `Assets/Site Models/stud_wall.fbx`.
 5. Save the scene, add it in Build Settings, switch platform to iOS.
 </details>
+
+### Android build (optional)
+
+The project targets iOS out of the box. For Android:
+- Player Settings → *Minimum API Level* 24+, *Scripting Backend* IL2CPP, *ARM64* ticked (ARCore requires it).
+- Player Settings → *Graphics APIs*: keep *OpenGLES3* (remove *Vulkan* if your ARCore version predates Vulkan support).
+- Add the *Google ARCore XR Plugin* and tick *ARCore* on the Android tab of XR Plug-in Management.
+- File → Build Settings → *Android* → *Build and Run*.
 
 ## On site
 

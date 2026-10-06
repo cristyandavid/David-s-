@@ -1,0 +1,51 @@
+{
+  "_about": "Construction assemblies with takeoff factors, for quantity/material estimating. Factors are standard framing rules of thumb; they produce a material list, not a stamped structural design. Openings, corners, blocking and waste are handled by the factors and the waste allowance noted per assembly. Always confirm structural sizing and code-required insulation/fire ratings against the current Ontario Building Code and your engineer/designer.",
+  "linear_assemblies": {
+    "_unit": "per linear foot of wall, at the assembly's nominal height",
+    "interior_wall_2x4_16oc": {
+      "label": "Interior partition, 2x4 SPF, 16\" O.C., 8 ft",
+      "height_ft": 8,
+      "stud_spacing_in": 16,
+      "components": {
+        "2x4 stud (precut 92 5/8\")": { "per_ft": 0.75, "extra_per_wall": 1, "note": "0.75 = 12/16 studs per ft; +1 for the end stud" },
+        "2x4 plate (bottom + double top)": { "plate_runs": 3, "note": "linear feet of plate = 3 x wall length" },
+        "framing nails 16d": { "lb_per_ft": 0.05 },
+        "drywall 1/2\" (both faces)": { "sqft_per_ft": 16, "note": "2 faces x 8 ft height" },
+        "drywall screws": { "lb_per_ft": 0.03 }
+      },
+      "waste_allowance": 0.10
+    },
+    "exterior_wall_2x6_16oc": {
+      "label": "Exterior load-bearing wall, 2x6 SPF, 16\" O.C., 8 ft",
+      "height_ft": 8,
+      "stud_spacing_in": 16,
+      "components": {
+        "2x6 stud (precut 92 5/8\")": { "per_ft": 0.75, "extra_per_wall": 1 },
+        "2x6 plate (bottom + double top)": { "plate_runs": 3 },
+        "OSB sheathing 7/16\"": { "sqft_per_ft": 8, "note": "1 face x 8 ft height" },
+        "house wrap": { "sqft_per_ft": 8.8, "note": "~10% overlap" },
+        "batt insulation R-22": { "sqft_per_ft": 8 },
+        "6 mil poly vapour barrier": { "sqft_per_ft": 8.8 },
+        "drywall 1/2\" (interior face)": { "sqft_per_ft": 8 },
+        "framing nails 16d": { "lb_per_ft": 0.06 },
+        "sheathing nails 8d": { "lb_per_ft": 0.04 }
+      },
+      "waste_allowance": 0.12
+    }
+  },
+  "area_assemblies": {
+    "_unit": "per square foot of floor area",
+    "floor_system_ijoist_16oc": {
+      "label": "Floor system, wood I-joist @ 16\" O.C., glued/screwed subfloor",
+      "joist_spacing_in": 16,
+      "components": {
+        "I-joist": { "lin_ft_per_sqft": 0.79, "note": "~1/1.333 ft of joist per sqft at 16\" O.C., before span/layout" },
+        "rim board": { "lin_ft_per_sqft": 0.09, "note": "perimeter; scales with shape, refine per plan" },
+        "tongue-and-groove subfloor 3/4\"": { "sqft_per_sqft": 1.0 },
+        "subfloor screws": { "lb_per_sqft": 0.02 },
+        "construction adhesive (tubes)": { "tubes_per_sqft": 0.012 }
+      },
+      "waste_allowance": 0.10
+    }
+  }
+}
