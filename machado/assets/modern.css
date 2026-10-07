@@ -1,0 +1,155 @@
+/* Machado Tattoo Studio: modern theme layer (2026-10-07).
+   Loaded after the main bundle CSS. Overrides look only; no layout logic. */
+:root {
+  --m-bg: #07080b;
+  --m-surface: rgba(255, 255, 255, 0.035);
+  --m-surface-2: rgba(255, 255, 255, 0.06);
+  --m-line: rgba(255, 255, 255, 0.08);
+  --m-line-strong: rgba(255, 255, 255, 0.16);
+  --m-gold: #f5c518;
+  --m-gold-2: #ffdf6b;
+  --m-text: #f4f4f5;
+  --m-muted: rgba(244, 244, 245, 0.62);
+  --m-radius: 18px;
+  --m-radius-sm: 12px;
+  --m-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+}
+
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(245, 197, 24, 0.08), transparent 60%),
+    radial-gradient(800px 500px at 100% 100%, rgba(120, 120, 255, 0.05), transparent 60%),
+    var(--m-bg) !important;
+  background-attachment: fixed !important;
+  color: var(--m-text);
+  font-family: "Inter", system-ui, sans-serif;
+  letter-spacing: -0.005em;
+}
+::selection { background: var(--m-gold); color: #000; }
+
+/* Header: frosted glass */
+header.fixed {
+  background: rgba(7, 8, 11, 0.72) !important;
+  backdrop-filter: saturate(160%) blur(18px);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  border-bottom-color: var(--m-line) !important;
+}
+.nav-link { letter-spacing: 0.04em; text-transform: none; font-size: 14px; font-weight: 500; color: var(--m-muted); }
+.nav-link:hover { color: #fff; }
+
+/* Display type: modern grotesk instead of engraved serif.
+   The logo wordmark (.leading-none) keeps the classic Cinzel look. */
+#root .font-serif:not(.leading-none),
+.section-title {
+  font-family: var(--m-display) !important;
+  text-transform: none !important;
+  letter-spacing: -0.02em !important;
+}
+.section-title {
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.5vw, 2.75rem) !important;
+  line-height: 1.1 !important;
+  background: linear-gradient(180deg, #fff 30%, #b9b9c2) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+#root h1.font-serif, #root .font-serif.text-4xl {
+  font-weight: 700 !important;
+  font-size: clamp(2.4rem, 8vw, 4.5rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.035em !important;
+}
+#root .font-serif.text-lg { font-size: 1.15rem; font-weight: 600; }
+
+/* Small uppercase kickers: softer tracking */
+#root .tracking-\[0\.35em\], #root .tracking-\[0\.3em\], #root .tracking-\[0\.4em\] { letter-spacing: 0.18em !important; }
+.label { letter-spacing: 0.12em; font-size: 11px; font-weight: 600; color: var(--m-muted); }
+
+/* Surfaces */
+.card {
+  background: linear-gradient(180deg, var(--m-surface-2), var(--m-surface)) !important;
+  border: 1px solid var(--m-line) !important;
+  border-radius: var(--m-radius) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 20px 40px -24px rgba(0, 0, 0, 0.8);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.card:hover { border-color: var(--m-line-strong) !important; }
+
+#root .border { border-radius: var(--m-radius-sm); }
+#root .rounded-full { border-radius: 9999px !important; }
+#root img { border-radius: 10px; }
+#root header img { border-radius: 0; }
+
+.notice {
+  border-radius: var(--m-radius-sm);
+  border-color: rgba(245, 197, 24, 0.25) !important;
+  background: rgba(245, 197, 24, 0.07) !important;
+  color: #fde68a !important;
+}
+
+/* Buttons: pills */
+.btn-gold, .btn-ghost {
+  border-radius: 9999px !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  padding: 0.85rem 1.4rem;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.btn-gold {
+  background: linear-gradient(180deg, var(--m-gold-2), var(--m-gold)) !important;
+  color: #111 !important;
+  box-shadow: 0 8px 24px -10px rgba(245, 197, 24, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.btn-gold:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 12px 28px -10px rgba(245, 197, 24, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+.btn-gold:disabled { box-shadow: none; }
+.btn-ghost {
+  border: 1px solid var(--m-line-strong) !important;
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.03);
+}
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.08) !important; border-color: rgba(255, 255, 255, 0.28) !important; }
+.icon-btn { border-radius: var(--m-radius-sm); border-color: var(--m-line-strong); }
+
+/* Inputs */
+.field {
+  border-radius: var(--m-radius-sm) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--m-line-strong) !important;
+  padding: 0.75rem 0.9rem;
+  font-size: 15px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field:focus { border-color: var(--m-gold) !important; box-shadow: 0 0 0 4px rgba(245, 197, 24, 0.15); }
+.field::placeholder { color: rgba(255, 255, 255, 0.35); }
+
+/* Hero glow: calmer, single warm light */
+.hero-glow {
+  background: radial-gradient(70% 55% at 50% 0%, rgba(245, 197, 24, 0.14), transparent 70%) !important;
+}
+
+/* Footer */
+footer { background: transparent !important; border-top-color: var(--m-line) !important; }
+
+/* Motion: gentle fade-in for sections, respects reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  main > * { animation: m-rise 0.5s ease both; }
+  @keyframes m-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+
+/* Stepper, chat, chips, picker: rounded and neutral */
+#root .bg-ink { background-color: rgba(7, 8, 11, 0.78) !important; }
+#root .sticky.bg-ink { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom-color: var(--m-line) !important; }
+#root .border-2:not(.rounded-full) { border-radius: var(--m-radius-sm); }
+#root .w-10.h-10.border-2 { border-radius: 9999px; border-width: 1.5px; }
+#root .w-8.h-8.border { border-radius: 9999px; }
+#root .bg-slate-900, #root .bg-slate-800 { border-radius: 16px; }
+#root .bg-slate-900 { background: rgba(255, 255, 255, 0.05) !important; border-left: 0 !important; border-top-left-radius: 4px; }
+#root .bg-slate-800 { background: rgba(245, 197, 24, 0.14) !important; border-top-right-radius: 4px; }
+#root .ring-4 { border-radius: 14px; }
+#root .bg-white.aspect-square { border-radius: 14px; }
+#root .px-2\.5.py-1\.5 { border-radius: 9999px; }
+#root .border.overflow-hidden, #root .border > .px-2\.5 { border-radius: 9999px; }
+#root .text-\[11px\].uppercase.border { border-radius: 9999px; text-transform: none; font-size: 12px; font-weight: 600; letter-spacing: 0; }
