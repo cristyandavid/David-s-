@@ -33,8 +33,14 @@ results = []
 
 
 def box(name):
-    """World-space (min, max) corners in inches, or None if the object is missing."""
-    obj = bpy.data.objects.get(name)
+    """World-space (min, max) corners in inches, or None if the object is missing.
+
+    Matches the exact name first, then a name prefix: the build appends a
+    suffix such as " (notebook spec 2026-10-29)".
+    """
+    obj = bpy.data.objects.get(name) or next(
+        (o for o in bpy.data.objects if o.name.startswith(name)), None
+    )
     if obj is None:
         return None
     corners = [obj.matrix_world @ Vector(c) for c in obj.bound_box]
