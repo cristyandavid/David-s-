@@ -63,6 +63,8 @@ for name, b in ((BEAM, beam), (RIDGE2, ridge), (POST, post)):
         print(f"FAIL  missing object: {name}")
 
 if ridge:
+    ft, inch = divmod(ridge[0].z, 12)
+    print(f"INFO  ridge underside {ft:.0f}'-{inch:.2f}\", top {ridge[1].z / 12:.2f} ft")
     check("ridge ply 2 bottom z", ridge[0].z, RIDGE_Z[0])
     check("ridge ply 2 top z", ridge[1].z, RIDGE_Z[1])
     check("ridge ply 2 start x", ridge[0].x, RIDGE_X[0])
@@ -81,6 +83,11 @@ if beam:
     check("beam depth", beam[1].z - beam[0].z, BEAM_DEPTH)
     if post:
         check("post bears on beam top", post[0].z, beam[1].z)
+    mid = (beam[0].x + beam[1].x) / 2
+    print(f"INFO  beam x {beam[0].x:.2f} to {beam[1].x:.2f}, centre {mid:.2f}")
+    if post:
+        off = (post[0].x + post[1].x) / 2 - mid
+        print(f"INFO  post is {off:+.2f} in from the beam centre (0 = centred)")
     under = abs(beam[0].z - BEAM_REF_Z) <= TOL
     top = abs(beam[1].z - BEAM_REF_Z) <= TOL
     which = "underside" if under else "top" if top else "neither face"
