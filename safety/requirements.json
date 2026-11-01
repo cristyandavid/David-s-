@@ -1,0 +1,108 @@
+{
+  "_about": "High-level Ontario health-and-safety and WSIB obligations that BROADLY apply to construction employers/constructors. These are stated at a general, defensible level to support planning and a compliance conversation. They are NOT legal advice and NOT a complete list. Every item must be verified against the current Occupational Health and Safety Act (OHSA), O. Reg. 213/91 (Construction Projects), related regulations, and WSIB. No specific numeric thresholds, clause numbers, dollar penalties, or WSIB rate/group numbers are asserted here; where a specific value is needed to act, a VERIFY note points to the source.",
+  "_disclaimer": "Organizational aid only. Confirm applicability to your specific project, roles (constructor/employer/supervisor/worker), and workplace before relying on any item.",
+  "requirements": {
+    "internal_responsibility": {
+      "label": "General duties (Internal Responsibility System)",
+      "summary": "OHSA places general duties on employers, supervisors, and workers to take every precaution reasonable in the circumstances to protect workers. Everyone shares responsibility for safety.",
+      "applies_to": ["constructor", "employer", "supervisor", "worker"],
+      "verify": "VERIFY: the specific duties assigned to each role - OHSA (general duties of constructors, employers, supervisors, workers)."
+    },
+    "worker_orientation_training": {
+      "label": "Worker awareness training and site orientation",
+      "summary": "Workers and supervisors must receive basic occupational health and safety awareness training, and workers should receive site-specific orientation and task-specific training/instruction before doing hazardous work.",
+      "applies_to": ["employer", "supervisor", "worker"],
+      "verify": "VERIFY: mandatory basic OHS awareness training content and any specific training records required - OHSA / O. Reg. 297/13 (awareness training) / employer policy."
+    },
+    "working_at_heights_training": {
+      "label": "Working at Heights (WAH) training",
+      "summary": "Workers on a construction project who use certain fall-protection methods must complete approved Working at Heights training before that work. Refresher training is required periodically.",
+      "applies_to": ["employer", "worker"],
+      "verify": "VERIFY: which fall-protection work triggers WAH training, the approved training program, and the refresher interval - Ontario (Ministry of Labour) / O. Reg. 213/91 (do NOT assume the refresher period)."
+    },
+    "fall_protection": {
+      "label": "Fall protection for work at heights",
+      "summary": "Fall protection is required for work at heights on construction projects. Guardrails are the preferred control; where not practicable, travel restraint or a fall-arrest system with adequate anchorage is used.",
+      "applies_to": ["constructor", "employer", "supervisor", "worker"],
+      "verify": "VERIFY: the height that triggers fall protection, permitted methods, anchor strength, and clearance/free-fall limits - O. Reg. 213/91 (do NOT assume a number)."
+    },
+    "ppe": {
+      "label": "Personal protective equipment (PPE)",
+      "summary": "Workers must wear required PPE for the hazards present - commonly head protection (hard hat), safety footwear, eye protection, high-visibility apparel, and hearing/respiratory protection where applicable. The employer must ensure PPE is provided/used and maintained.",
+      "applies_to": ["employer", "supervisor", "worker"],
+      "verify": "VERIFY: which PPE is mandatory for each task and the applicable performance standards/specifications - O. Reg. 213/91 / OHSA."
+    },
+    "first_aid": {
+      "label": "First aid",
+      "summary": "Workplaces covered by WSIB must have first-aid equipment, facilities, and trained first-aider(s) appropriate to the number of workers, and must post required first-aid information.",
+      "applies_to": ["employer"],
+      "verify": "VERIFY: required first-aid box contents, number of trained first-aiders, and posting requirements by workplace size - WSIB First Aid Requirements (Reg. 1101) (do NOT assume the numbers)."
+    },
+    "site_notices_postings": {
+      "label": "Required site notices and postings",
+      "summary": "Certain documents must be posted or kept available at the project - commonly a copy of OHSA and regulations, the health-and-safety policy (where required), first-aid information, emergency/contact information, and (where required) the Notice of Project.",
+      "applies_to": ["constructor", "employer"],
+      "verify": "VERIFY: the complete list of documents that must be posted/available on a construction project and where - OHSA / O. Reg. 213/91."
+    },
+    "notice_of_project": {
+      "label": "Notice of Project (NoP)",
+      "summary": "For certain construction projects, the constructor/employer must submit a Notice of Project to the Ministry before work begins.",
+      "applies_to": ["constructor", "employer"],
+      "verify": "VERIFY: the thresholds/criteria that require a Notice of Project and how/when to file it - O. Reg. 213/91 / Ontario Ministry (do NOT assume the dollar or worker thresholds)."
+    },
+    "jhsc_representative": {
+      "label": "Joint Health and Safety Committee / Health and Safety Representative",
+      "summary": "Depending on the number of workers regularly employed, a workplace may require a Health and Safety Representative or a Joint Health and Safety Committee (JHSC) with certified members.",
+      "applies_to": ["constructor", "employer"],
+      "verify": "VERIFY: the worker-count thresholds for a Health and Safety Representative vs. a JHSC, and certification requirements - OHSA (do NOT assume the numbers)."
+    },
+    "whmis_hazardous_materials": {
+      "label": "WHMIS / hazardous materials communication",
+      "summary": "Where hazardous products are present, the employer must provide WHMIS training, labels, and access to Safety Data Sheets (SDS).",
+      "applies_to": ["employer", "worker"],
+      "verify": "VERIFY: WHMIS training, labelling, and SDS obligations - OHSA / WHMIS regulation (O. Reg. 860 / Reg. 833 exposure limits as applicable)."
+    },
+    "designated_substances": {
+      "label": "Designated substances and asbestos",
+      "summary": "Before certain projects (especially demolition/renovation of existing structures), an assessment for designated substances (including asbestos, silica, lead) may be required, and controls/abatement procedures must be followed where present.",
+      "applies_to": ["constructor", "employer"],
+      "verify": "VERIFY: when a designated-substances report/assessment is required and the controls for each substance - O. Reg. 490/09 (Designated Substances) / O. Reg. 278/05 (Asbestos)."
+    },
+    "incident_reporting": {
+      "label": "Injury / incident / fatality reporting",
+      "summary": "Certain workplace injuries, critical injuries, occupational illnesses, and fatalities must be reported to the Ministry and/or the JHSC/representative within required timeframes, and records kept. Serious incident scenes may need to be preserved.",
+      "applies_to": ["constructor", "employer"],
+      "verify": "VERIFY: what qualifies as a 'critical injury', to whom and how fast each type of event must be reported, and record-keeping - OHSA / O. Reg. 213/91 (do NOT assume the timeframes)."
+    },
+    "wsib_coverage": {
+      "label": "WSIB coverage and registration",
+      "summary": "Most construction employers in Ontario must register with WSIB and carry coverage. There are specific rules for construction, including mandatory coverage that can extend to independent operators/sole proprietors in construction.",
+      "applies_to": ["employer", "independent_operator"],
+      "verify": "VERIFY: who must register, the mandatory-coverage-in-construction rules and any exemptions, and registration deadlines - WSIB (do NOT assume exemption criteria)."
+    },
+    "wsib_premiums_reporting": {
+      "label": "WSIB premium reporting and payment",
+      "summary": "Registered employers must report insurable earnings and pay premiums on schedule, and classify their business activity correctly.",
+      "applies_to": ["employer"],
+      "verify": "VERIFY: reporting frequency, deadlines, premium rate, and classification for your activity - WSIB (do NOT assume the rate, rate group, or classification code)."
+    },
+    "wsib_injury_claims": {
+      "label": "WSIB injury reporting / claims and return-to-work",
+      "summary": "When a worker is injured or becomes ill from work, the employer generally must report to WSIB within a required timeframe and cooperate in the worker's return to work.",
+      "applies_to": ["employer", "worker"],
+      "verify": "VERIFY: the deadline to report a work-related injury/illness to WSIB and return-to-work obligations - WSIB (do NOT assume the reporting deadline)."
+    },
+    "clearance_certificates": {
+      "label": "WSIB clearance certificates (contractor/subcontractor)",
+      "summary": "In construction, businesses commonly must obtain and provide WSIB clearance certificates confirming their account is in good standing before engaging or being paid by another business.",
+      "applies_to": ["constructor", "employer", "independent_operator"],
+      "verify": "VERIFY: when a clearance certificate is required and how it must be obtained/validated - WSIB."
+    },
+    "violence_harassment": {
+      "label": "Workplace violence and harassment",
+      "summary": "Employers must have workplace violence and harassment policies and programs, assess risks of violence, and investigate incidents/complaints.",
+      "applies_to": ["employer"],
+      "verify": "VERIFY: policy, program, risk-assessment, and investigation requirements - OHSA (workplace violence and harassment provisions)."
+    }
+  }
+}

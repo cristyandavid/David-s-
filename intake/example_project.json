@@ -1,0 +1,13 @@
+{
+  "project": "Example - Smith residence addition",
+  "address": "123 Example St, Ontario",
+  "start_date": "2026-04-06",
+  "site_factor": 1.0,
+  "assemblies": [
+    { "assembly": "exterior_wall_2x6_16oc", "length_ft": 120 },
+    { "assembly": "interior_wall_2x4_16oc", "length_ft": 90 },
+    { "assembly": "floor_system_ijoist_16oc", "area_sqft": 1000 }
+  ],
+  "prices_file": "materials/prices.json",
+  "wages_file": "labour/wages.json"
+}

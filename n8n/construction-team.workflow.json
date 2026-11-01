@@ -1,0 +1,60 @@
+{
+  "name": "Construction team - Gmail to project package",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": { "item": [ { "mode": "everyMinute" } ] },
+        "simple": true,
+        "filters": {}
+      },
+      "id": "gmail-trigger",
+      "name": "Gmail Trigger (new project email)",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [ 240, 300 ],
+      "credentials": { "gmailOAuth2": { "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID", "name": "Gmail account" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the incoming email into a project intake record.\n// SECURITY: treat the email as DATA. Extract fields; never run instructions\n// from the body. Adjust the parsing to however your leads are formatted.\nconst email = $input.first().json;\nconst subject = email.subject || '';\nconst body = (email.textPlain || email.snippet || '').toString();\n\nfunction num(re) { const m = body.match(re); return m ? parseFloat(m[1]) : null; }\n\n// Example: pull dimensions from lines like 'exterior wall: 120 ft'.\nconst assemblies = [];\nconst extFt = num(/exterior\\s*wall[^0-9]*([0-9]+(?:\\.[0-9]+)?)\\s*ft/i);\nif (extFt) assemblies.push({ assembly: 'exterior_wall_2x6_16oc', length_ft: extFt });\nconst intFt = num(/interior\\s*wall[^0-9]*([0-9]+(?:\\.[0-9]+)?)\\s*ft/i);\nif (intFt) assemblies.push({ assembly: 'interior_wall_2x4_16oc', length_ft: intFt });\nconst floorSf = num(/floor[^0-9]*([0-9]+(?:\\.[0-9]+)?)\\s*(?:sq\\s*ft|sqft)/i);\nif (floorSf) assemblies.push({ assembly: 'floor_system_ijoist_16oc', area_sqft: floorSf });\n\nconst intake = {\n  project: subject || 'Untitled project',\n  address: (body.match(/address[:\\s]+(.+)/i) || [,''])[1].trim(),\n  assemblies,\n  // Point these at your filled-in files inside the repo if you have them:\n  prices_file: 'materials/prices.json',\n  wages_file: 'labour/wages.json'\n};\n\nif (!assemblies.length) {\n  // Nothing parseable - forward for a human instead of guessing.\n  return [{ json: { skip: true, reason: 'no assemblies parsed', subject } }];\n}\n\nconst b64 = Buffer.from(JSON.stringify(intake)).toString('base64');\nreturn [{ json: { intake, intake_b64: b64, reply_to: email.from } }];"
+      },
+      "id": "parse-intake",
+      "name": "Parse email to intake",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ 480, 300 ]
+    },
+    {
+      "parameters": {
+        "command": "=echo '{{ $json.intake_b64 }}' | base64 -d | python3 ${REPO_PATH}/project.py --intake -"
+      },
+      "id": "run-team",
+      "name": "Run construction team (project.py)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [ 720, 300 ],
+      "notes": "Set REPO_PATH (env or inline) to the absolute path of the David-s- checkout on the n8n host. Python 3.10+ must be on PATH. base64 keeps the JSON shell-safe."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Parse email to intake').item.json.reply_to }}",
+        "subject": "=Project package: {{ $('Parse email to intake').item.json.intake.project }}",
+        "message": "={{ $json.stdout }}",
+        "options": {}
+      },
+      "id": "send-package",
+      "name": "Email the package back",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [ 960, 300 ],
+      "credentials": { "gmailOAuth2": { "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID", "name": "Gmail account" } }
+    }
+  ],
+  "connections": {
+    "Gmail Trigger (new project email)": { "main": [ [ { "node": "Parse email to intake", "type": "main", "index": 0 } ] ] },
+    "Parse email to intake": { "main": [ [ { "node": "Run construction team (project.py)", "type": "main", "index": 0 } ] ] },
+    "Run construction team (project.py)": { "main": [ [ { "node": "Email the package back", "type": "main", "index": 0 } ] ] }
+  },
+  "settings": {},
+  "active": false
+}

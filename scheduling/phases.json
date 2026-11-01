@@ -1,0 +1,305 @@
+{
+  "_about": "Standard Ontario detached residential build sequence as a task network for critical-path scheduling. Each task has an id, a human label, a list of predecessor ids (tasks that must finish first), and a duration_model. Durations are ENGINEERING ESTIMATES derived from work quantities and crew productivity, not schedule commitments. They ignore weather, trade availability, permit/inspection queue times, supply lead times and change orders. Treat the computed schedule as a planning aid and confirm every date against real trade calendars, the municipal inspection queue and the Ontario Building Code.",
+
+  "_reference_project": {
+    "description": "All 'derived' quantities below are sized for ONE reference house. Change these to match your project, or override the quantity on any task, and re-run schedule.py.",
+    "type": "2-storey detached, full basement",
+    "gross_floor_area_sqft": 2000,
+    "footprint_sqft": 1000,
+    "foundation_perimeter_lin_ft": 180,
+    "wall_length_total_lin_ft": 400,
+    "roof_area_sqft": 1400,
+    "note": "Areas/lengths are round planning figures for a mid-size Ontario home. TUNE them."
+  },
+
+  "_duration_model": {
+    "fixed": "duration_days = days. Used for administrative waits, concrete cure and inspections, where calendar time is not driven by a crew's output.",
+    "derived": "duration_days = ceil(quantity / (crew * productivity)), minimum 1. crew = number of workers (or machine-operator units). productivity = units of work one worker completes per working day. daily_output = crew * productivity. ALL crew sizes and productivity rates below are ASSUMPTIONS and are marked tunable:true — they are typical small-builder figures, NOT measured from your crews. Replace them with your own history for a real schedule.",
+    "units": "Working days (Mon-Fri). Weekends and holidays are skipped only when --start-date is given to print calendar dates."
+  },
+
+  "tasks": [
+    {
+      "id": "permits",
+      "label": "Building permit approval",
+      "predecessors": [],
+      "duration_model": {
+        "type": "fixed",
+        "days": 15,
+        "tunable": true,
+        "note": "Municipal review/issuance wait, not crew work. Ontario municipalities vary widely (statutory targets ~10 business days for a house, often longer in practice). Set to your municipality's real turnaround."
+      }
+    },
+    {
+      "id": "excavation",
+      "label": "Excavation / basement dig",
+      "predecessors": ["permits"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 350,
+        "unit": "cubic yards",
+        "crew": 1,
+        "productivity": 150,
+        "productivity_unit": "cu yd per machine-crew per day",
+        "tunable": true,
+        "note": "One excavator + operator. Volume = basement dig plus over-dig for a ~1000 sqft footprint at ~8 ft depth."
+      }
+    },
+    {
+      "id": "footings",
+      "label": "Footings (form + pour)",
+      "predecessors": ["excavation"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 180,
+        "unit": "linear feet",
+        "crew": 3,
+        "productivity": 30,
+        "productivity_unit": "lin ft formed+poured per worker per day",
+        "tunable": true
+      }
+    },
+    {
+      "id": "foundation_walls",
+      "label": "Foundation walls (form + pour)",
+      "predecessors": ["footings"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 180,
+        "unit": "linear feet",
+        "crew": 4,
+        "productivity": 15,
+        "productivity_unit": "lin ft of wall formed+poured per worker per day",
+        "tunable": true,
+        "note": "Cast-in-place; adjust productivity down for ICF or block."
+      }
+    },
+    {
+      "id": "foundation_cure",
+      "label": "Concrete cure before stripping / backfill",
+      "predecessors": ["foundation_walls"],
+      "duration_model": {
+        "type": "fixed",
+        "days": 3,
+        "tunable": true,
+        "note": "Wait for concrete to gain strength before stripping forms and backfilling. Cold Ontario weather lengthens this; not crew-driven."
+      }
+    },
+    {
+      "id": "backfill",
+      "label": "Backfill + rough grade",
+      "predecessors": ["foundation_cure"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 350,
+        "unit": "cubic yards",
+        "crew": 1,
+        "productivity": 175,
+        "productivity_unit": "cu yd per machine-crew per day",
+        "tunable": true,
+        "note": "Damp-proofing, weeping tile and drainage layer assumed done just before backfill; fold into this task or add your own."
+      }
+    },
+    {
+      "id": "framing_floor",
+      "label": "Floor framing + subfloor",
+      "predecessors": ["backfill"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 2000,
+        "unit": "square feet",
+        "crew": 4,
+        "productivity": 200,
+        "productivity_unit": "sqft of floor framed+decked per worker per day",
+        "tunable": true,
+        "note": "Both floor levels' framed area."
+      }
+    },
+    {
+      "id": "framing_walls",
+      "label": "Wall framing (exterior + interior)",
+      "predecessors": ["framing_floor"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 400,
+        "unit": "linear feet",
+        "crew": 4,
+        "productivity": 40,
+        "productivity_unit": "lin ft of wall framed+stood per worker per day",
+        "tunable": true
+      }
+    },
+    {
+      "id": "framing_roof",
+      "label": "Roof framing (trusses / rafters)",
+      "predecessors": ["framing_walls"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 1400,
+        "unit": "square feet",
+        "crew": 4,
+        "productivity": 175,
+        "productivity_unit": "sqft of roof framed per worker per day",
+        "tunable": true,
+        "note": "Engineered trusses set by crane are faster; stick-framing is slower."
+      }
+    },
+    {
+      "id": "sheathing",
+      "label": "Wall + roof sheathing",
+      "predecessors": ["framing_roof"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 2600,
+        "unit": "square feet",
+        "crew": 3,
+        "productivity": 400,
+        "productivity_unit": "sqft sheathed per worker per day",
+        "tunable": true,
+        "note": "Wall + roof sheathing area combined."
+      }
+    },
+    {
+      "id": "roofing",
+      "label": "Roofing (shingles / membrane)",
+      "predecessors": ["sheathing"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 14,
+        "unit": "roofing squares",
+        "crew": 3,
+        "productivity": 2,
+        "productivity_unit": "squares per worker per day (incl. underlayment/flashing)",
+        "tunable": true,
+        "note": "1 square = 100 sqft. Runs in parallel with windows/doors."
+      }
+    },
+    {
+      "id": "windows_doors",
+      "label": "Windows + exterior doors",
+      "predecessors": ["sheathing"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 20,
+        "unit": "openings",
+        "crew": 2,
+        "productivity": 4,
+        "productivity_unit": "openings set+flashed per worker per day",
+        "tunable": true,
+        "note": "Runs in parallel with roofing; both make the shell weathertight for rough-ins."
+      }
+    },
+    {
+      "id": "rough_electrical",
+      "label": "Rough-in: electrical",
+      "predecessors": ["roofing", "windows_doors"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 2000,
+        "unit": "square feet",
+        "crew": 2,
+        "productivity": 500,
+        "productivity_unit": "sqft roughed per worker per day",
+        "tunable": true,
+        "note": "Weathertight shell required first. Runs in parallel with plumbing + HVAC rough-ins."
+      }
+    },
+    {
+      "id": "rough_plumbing",
+      "label": "Rough-in: plumbing",
+      "predecessors": ["roofing", "windows_doors"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 2000,
+        "unit": "square feet",
+        "crew": 2,
+        "productivity": 350,
+        "productivity_unit": "sqft roughed per worker per day",
+        "tunable": true,
+        "note": "Runs in parallel with electrical + HVAC rough-ins; usually the slowest of the three, so it tends to drive the rough-in window."
+      }
+    },
+    {
+      "id": "rough_hvac",
+      "label": "Rough-in: HVAC / ductwork",
+      "predecessors": ["roofing", "windows_doors"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 2000,
+        "unit": "square feet",
+        "crew": 2,
+        "productivity": 500,
+        "productivity_unit": "sqft roughed per worker per day",
+        "tunable": true,
+        "note": "Runs in parallel with electrical + plumbing rough-ins."
+      }
+    },
+    {
+      "id": "rough_in_inspection",
+      "label": "Framing + rough-in inspection",
+      "predecessors": ["rough_electrical", "rough_plumbing", "rough_hvac"],
+      "duration_model": {
+        "type": "fixed",
+        "days": 1,
+        "tunable": true,
+        "note": "Municipal inspection before anything is covered. The BOOKING queue can add days/weeks and is NOT modelled here."
+      }
+    },
+    {
+      "id": "insulation",
+      "label": "Insulation + vapour barrier",
+      "predecessors": ["rough_in_inspection"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 2200,
+        "unit": "square feet",
+        "crew": 2,
+        "productivity": 550,
+        "productivity_unit": "sqft of insulated assembly per worker per day",
+        "tunable": true,
+        "note": "Exterior wall + ceiling area. Confirm R-values against OBC SB-12."
+      }
+    },
+    {
+      "id": "drywall",
+      "label": "Drywall (hang, tape, finish)",
+      "predecessors": ["insulation"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 7000,
+        "unit": "square feet of board",
+        "crew": 4,
+        "productivity": 250,
+        "productivity_unit": "sqft hung+taped+sanded per worker per day (blended)",
+        "tunable": true,
+        "note": "Blended rate deliberately low: it absorbs inter-coat drying time for tape/mud. Board area = walls (both sides) + ceilings."
+      }
+    },
+    {
+      "id": "finishes",
+      "label": "Interior finishes (trim, paint, floors, cabinets, fixtures)",
+      "predecessors": ["drywall"],
+      "duration_model": {
+        "type": "derived",
+        "quantity": 2000,
+        "unit": "square feet of floor area",
+        "crew": 4,
+        "productivity": 40,
+        "productivity_unit": "sqft brought to finish per worker per day (blended trades)",
+        "tunable": true,
+        "note": "Coarse blended rate across many trades (paint, flooring, trim, cabinets, plumbing/electrical finish). The single biggest and most variable phase; break it into sub-tasks for a real schedule."
+      }
+    },
+    {
+      "id": "final_inspection",
+      "label": "Final inspection / occupancy",
+      "predecessors": ["finishes"],
+      "duration_model": {
+        "type": "fixed",
+        "days": 1,
+        "tunable": true,
+        "note": "Occupancy inspection. Booking queue not modelled."
+      }
+    }
+  ]
+}

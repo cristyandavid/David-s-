@@ -1,0 +1,26 @@
+{
+  "_about": "SUPPLIER TEMPLATE. Every value here is a placeholder/TODO on purpose. Copy this file to suppliers.json and fill it with REAL Ontario supplier details. Lead times and delivery notes are placeholders to confirm with the supplier before you rely on them for scheduling. This file is informational (contacts, lead times, delivery terms); prices live separately in prices.json (see ../materials/prices.example.json).",
+  "as_of": "TODO: date you confirmed these details",
+  "suppliers": [
+    {
+      "name": "TODO: supplier name (placeholder)",
+      "contact_name": "TODO: rep / account manager",
+      "phone": "TODO: phone",
+      "email": "TODO: email",
+      "account_number": "TODO: your account number, if any",
+      "lead_time_days": 0,
+      "delivery_notes": "TODO: delivery vs pickup, min order, delivery fee, cut-off time, site access notes — CONFIRM with supplier",
+      "supplies": ["TODO: e.g. dimensional lumber, sheet goods", "placeholder"]
+    },
+    {
+      "name": "TODO: second supplier (placeholder)",
+      "contact_name": "TODO",
+      "phone": "TODO",
+      "email": "TODO",
+      "account_number": "TODO",
+      "lead_time_days": 0,
+      "delivery_notes": "TODO: CONFIRM lead time and delivery terms",
+      "supplies": ["TODO", "placeholder"]
+    }
+  ]
+}

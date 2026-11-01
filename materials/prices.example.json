@@ -1,0 +1,26 @@
+{
+  "_about": "PRICE TEMPLATE. These numbers are placeholders (0.00) on purpose. Copy this file to prices.json and fill it with REAL quotes from your Ontario supplier. Never trust the zeros. Prices in CAD, before tax (HST 13% in Ontario). Keys match the component names used in assemblies.json.",
+  "currency": "CAD",
+  "as_of": "TODO: date of your quote",
+  "supplier": "TODO: supplier name",
+  "unit_prices": {
+    "2x4 stud (precut 92 5/8\")": { "unit": "each", "price": 0.00 },
+    "2x6 stud (precut 92 5/8\")": { "unit": "each", "price": 0.00 },
+    "2x4 plate (bottom + double top)": { "unit": "per_lin_ft", "price": 0.00 },
+    "2x6 plate (bottom + double top)": { "unit": "per_lin_ft", "price": 0.00 },
+    "OSB sheathing 7/16\"": { "unit": "per_sqft", "price": 0.00 },
+    "drywall 1/2\" (both faces)": { "unit": "per_sqft", "price": 0.00 },
+    "drywall 1/2\" (interior face)": { "unit": "per_sqft", "price": 0.00 },
+    "house wrap": { "unit": "per_sqft", "price": 0.00 },
+    "batt insulation R-22": { "unit": "per_sqft", "price": 0.00 },
+    "6 mil poly vapour barrier": { "unit": "per_sqft", "price": 0.00 },
+    "framing nails 16d": { "unit": "per_lb", "price": 0.00 },
+    "sheathing nails 8d": { "unit": "per_lb", "price": 0.00 },
+    "drywall screws": { "unit": "per_lb", "price": 0.00 },
+    "I-joist": { "unit": "per_lin_ft", "price": 0.00 },
+    "rim board": { "unit": "per_lin_ft", "price": 0.00 },
+    "tongue-and-groove subfloor 3/4\"": { "unit": "per_sqft", "price": 0.00 },
+    "subfloor screws": { "unit": "per_lb", "price": 0.00 },
+    "construction adhesive (tubes)": { "unit": "each", "price": 0.00 }
+  }
+}
