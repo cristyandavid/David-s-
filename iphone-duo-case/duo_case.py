@@ -12,7 +12,17 @@ from manifold3d import CrossSection as CS, Manifold as M
 import trimesh
 
 # ---- phone (edit for your model) ------------------------------------------
-W, H, T, R = 71.9, 150.0, 8.75, 11.0   # width, height, thickness, plan corner radius
+import os, sys
+PROFILES = {   # W, H, T, corner R, camera (cx offset from left, cy offset from top, size, radius), key y-offsets from top
+    "pro":  dict(W=71.9, H=150.0, T=8.75, R=11.0, cam=(20.5, 21.5, 38.0, 9.0),
+                 act=28, volu=44, vold=62, pwr=50, ctl=42, volh=13.5),
+    # iPhone 13/12 mini (approx): 64.2 x 131.5 x 7.65, dual camera
+    "mini": dict(W=64.2, H=131.5, T=7.65, R=9.0, cam=(16.5, 16.5, 29.0, 7.5),
+                 act=24, volu=36, vold=51, pwr=40, ctl=-999, volh=11.0),
+}
+PROFILE = os.environ.get("PHONE", "pro")
+P = PROFILES[PROFILE]
+W, H, T, R = P["W"], P["H"], P["T"], P["R"]
 # ---- case parameters -------------------------------------------------------
 CLR   = 0.25    # clearance around phone per side
 WALL  = 2.0     # side wall
@@ -85,7 +95,7 @@ def capsule_x(x, y, z, length, rad):    # bump running along y at x
     return M.cylinder(length, rad, rad, 24).rotate((-90, 0, 0)).translate((x, y - length/2, z))
 tx = OW/2 - mid_off - LAP_GAP/2                 # outer face of tongue
 for sx in (-1, 1):
-    for yy in (-38, 38):
+    for yy in (-H*0.25, H*0.25):
         bump = capsule_x(sx*tx, yy, ZS - LAP_H/2, 14, .35)
         back = back + (bump ^ slab(rrect(OW, OH, OR), 0, Z_TOP))
         groove = capsule_x(sx*tx, yy, ZS - LAP_H/2, 14.6, .45)
@@ -103,7 +113,8 @@ def box(cx, cy, cz, sx, sy, sz, r=0.0):
 
 zc = (z_cav0 + z_cav1)/2
 # camera plateau (back, top-left looking at back)  -- adjust to your model
-cam = box(-W/2 + 20.5 + 0.0, H/2 - 21.5, FLOOR/2, 38.0, 38.0, FLOOR*3, 9.0)
+cx, cy, cs, cr = P['cam']
+cam = box(-W/2 + cx, H/2 - cy, FLOOR/2, cs, cs, FLOOR*3, cr)
 back = back - cam
 # USB-C + speaker/mic grilles (bottom edge)  y = -OH/2
 bottom_cuts = [box(0, -OH/2, zc, 14.0, WALL*5, 6.8)]
@@ -116,10 +127,10 @@ for c in bottom_cuts:
     front = front - c
 # side keys (left: action + volume, right: power / camera control)
 side_cuts = [
-    box(-OW/2, H/2 - 28, zc, WALL*5, 8.5, 4.4),     # action button
-    box(-OW/2, H/2 - 44, zc, WALL*5, 13.5, 4.4),    # volume up
-    box(-OW/2, H/2 - 62, zc, WALL*5, 13.5, 4.4),    # volume down
-    box(+OW/2, H/2 - 50, zc, WALL*5, 22.0, 4.4),    # side/power
+    box(-OW/2, H/2 - P['act'], zc, WALL*5, 8.5, 4.4),     # action button
+    box(-OW/2, H/2 - P['volu'], zc, WALL*5, P['volh'], 4.4),    # volume up
+    box(-OW/2, H/2 - P['vold'], zc, WALL*5, P['volh'], 4.4),    # volume down
+    box(+OW/2, H/2 - P['pwr'], zc, WALL*5, 18.0 if PROFILE=='mini' else 22.0, 4.4),    # side/power
     box(+OW/2, -H/2 + 42, zc, WALL*5, 11.0, 4.4),   # camera control
 ]
 for c in side_cuts:
@@ -133,14 +144,15 @@ def to_tm(mf):
 
 if __name__ == "__main__":
     import os
+    SUF = '' if PROFILE == 'pro' else '_' + PROFILE
     here = os.path.dirname(os.path.abspath(__file__))
     # print orientation: back shell as-is (floor on bed); front shell flipped (bezel plate on bed)
     tb = to_tm(back); tf = to_tm(front)
-    tb.export(f"{here}/back_shell.stl")
+    tb.export(f"{here}/back_shell{SUF}.stl")
     ff = tf.copy(); ff.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [1, 0, 0]))
     ff.apply_translation([0, 0, -ff.bounds[0][2]])
-    ff.export(f"{here}/front_shell_print.stl")
-    asm = trimesh.util.concatenate([tb, tf]); asm.export(f"{here}/assembled.stl")
+    ff.export(f"{here}/front_shell_print{SUF}.stl")
+    asm = trimesh.util.concatenate([tb, tf]); asm.export(f"{here}/assembled{SUF}.stl")
     for n, t in (("back", tb), ("front", tf)):
         print(n, "watertight:", t.is_watertight, "volume cm3: %.1f" % (t.volume/1000), "bounds", t.bounds.round(1).tolist())
     print("overall (mm): %.1f x %.1f x %.1f" % (OW, OH, Z_TOP))
