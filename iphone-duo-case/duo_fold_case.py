@@ -39,8 +39,8 @@ LIP_T = 1.80                      # front bezel plate thickness
 LIP_CLR = 0.30                    # lip standoff above the glass (raised bezel protects screen)
 Z_FRONT_CAV = GLASS_TOP + LIP_CLR           # 11.60
 Z_TOP = Z_FRONT_CAV + LIP_T                 # 13.40
-LIP_IN = 2.90                     # lip overlap of screen border (Apple max 3.06)
-HINGE_LIP = 5.00                  # lip overlap at hinge edge (Apple max 5.23)
+LIP_IN = 2.60                     # lip overlap of screen border (Apple max 3.06; active area starts at 2.71)
+HINGE_LIP = 4.00                  # lip overlap at hinge edge (Apple max 5.23; active area starts at 4.13)
 SEG = 96
 
 X = lambda xp: xp - PW/2          # from hinge-edge distance -> centred x
@@ -62,7 +62,8 @@ def body(z0, z1, e=1.2):           # outer envelope with softly rounded top/bott
     return M.batch_hull([slab(r(-e), z0, z0+.01), slab(r(0), z0+e, z1-e), slab(r(-e), z1-.01, z1),
                          slab(r(-e*.45), z0+.3*e, z0+.31*e), slab(r(-e*.45), z1-.31*e, z1-.3*e)])
 
-XL = X(0) - CLR                    # hinge edge: shell plate ends flush with phone (open side)
+HX = -(164.6 - PW) / 2             # hinge axis x (open width 164.6 mm)
+XL = HX + 0.40                     # shells stop 0.4 mm short of the hinge axis so they clear each other when unfolded
 def clip_hinge(mf):
     return mf - box(XL - 200, XL, -200, 200, -50, 50)
 
@@ -123,7 +124,7 @@ def to_tm(mf):
     return trimesh.Trimesh(vertices=mesh.vert_properties[:, :3], faces=mesh.tri_verts)
 
 def open_pose(tm_front):           # unfold: rotate front half 180 deg about the hinge axis
-    hx = -(164.6 - PW)/2
+    hx = HX
     T = trimesh.transformations
     M_ = T.translation_matrix([hx, 0, SEAM]) @ T.rotation_matrix(np.pi, [0, 1, 0]) @ T.translation_matrix([-hx, 0, -SEAM])
     f = tm_front.copy(); f.apply_transform(M_); return f

@@ -12,9 +12,15 @@ https://developer.apple.com/download/files/accessories/dimensional-drawings/ipho
 Apple publishes no STEP/solid CAD publicly; the PDF is Apple's copyright and is not stored in this repo.
 
 Rules applied from the drawing notes: no metal / no magnets, back-of-phone case thickness <= 2.1 mm (this design: 1.9 mm),
-screen-border overlap <= 3.06 mm (2.9 mm), hinge-side overlap <= 5.23 mm (5.0 mm), camera plateau / front camera /
+screen-border overlap <= 3.06 mm (2.6 mm), hinge-side overlap <= 5.23 mm (4.0 mm; keeps the whole display active area visible), camera plateau / front camera /
 ports / buttons uncovered.
 
 ## Print notes
 PETG or ABS, 0.2 mm layers, 4 walls. Front shell prints bezel-down (STL already flipped), back shell prints floor-down.
 Print the back shell first and test-fit. Unverified: plan corner radius (11 mm assumed), exact button/port offsets.
+
+## Tests
+`python3 test_duo_fold_case.py` runs 21 digital checks (watertight, fit vs. Apple drawing, Apple case rules, camera/sensor keep-outs,
+button + port openings, fold 0-180 deg collision sweep). They caught and fixed: lip covering display active area, and shells
+colliding when unfolded (shells now stop 0.4 mm short of the hinge axis, so the hinge spine itself is uncovered).
+These are geometry tests only - a physical print/fit test is still required.
