@@ -24,3 +24,7 @@ Print the back shell first and test-fit. Unverified: plan corner radius (11 mm a
 button + port openings, fold 0-180 deg collision sweep). They caught and fixed: lip covering display active area, and shells
 colliding when unfolded (shells now stop 0.4 mm short of the hinge axis, so the hinge spine itself is uncovered).
 These are geometry tests only - a physical print/fit test is still required.
+
+## Animation
+`python3 animate_duo.py` builds `duo_case_anim.blend` (front shell + phone half keyframed 0->180 deg about the hinge pivot) and renders
+`duo_fold.mp4` / `duo_fold.gif` (needs `pip install bpy manifold3d trimesh`; ~10 min on 4 CPU cores). Open the .blend and scrub the timeline.
